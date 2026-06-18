@@ -1135,25 +1135,28 @@ function App() {
             {renderEditableLocation('address')}
           </p>
 
-          {/* Real Map Image Link (Direct Naver Map Integration) */}
+          {/* Interactive Google Map Embed */}
           <div className="map-image-container" style={{ position: 'relative', width: '100%', height: '240px', borderRadius: '16px', overflow: 'hidden', marginBottom: '16px', border: '1px solid var(--border)' }}>
-            <img 
-              src={naverMapImg} 
-              alt="네이버 지도 약도" 
-              style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer' }}
-              onClick={() => window.open(config.location.mapLinkNaver, '_blank')}
-            />
+            <iframe 
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(config.location.address + ' ' + config.location.hallName)}&t=&z=16&ie=UTF8&iwloc=&output=embed`}
+              width="100%" 
+              height="100%" 
+              style={{ border: 0 }} 
+              allowFullScreen="" 
+              loading="lazy"
+              title="Map"
+            ></iframe>
             <div 
               className="map-overlay-btn"
               onClick={() => copyText(config.location.address, '식장 주소가 복사되었습니다! 📋')}
-              style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(255,255,255,0.95)', border: '1px solid var(--border)', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', boxShadow: 'var(--shadow-sm)' }}
+              style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(255,255,255,0.95)', border: '1px solid var(--border)', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', boxShadow: 'var(--shadow-sm)', zIndex: 5 }}
             >
               📍 주소 복사
             </div>
             <div
-              style={{ position: 'absolute', top: '10px', left: '10px', background: 'rgba(78, 68, 73, 0.85)', color: 'white', padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', pointerEvents: 'none' }}
+              style={{ position: 'absolute', top: '10px', left: '10px', background: 'rgba(78, 68, 73, 0.85)', color: 'white', padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', pointerEvents: 'none', zIndex: 5 }}
             >
-              지도를 터치하면 네이버 지도로 연결됩니다
+              지도를 드래그하여 움직이거나 확대할 수 있습니다
             </div>
           </div>
 
