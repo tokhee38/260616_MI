@@ -6,6 +6,7 @@
     "detail": "단독홀",
     "latitude": 37.5238,
     "longitude": 127.0279,
+    "naverClientId": "",
     "mapLinkKakao": "https://map.kakao.com/link/to/토브헤세드,37.5238,127.0279",
     "mapLinkNaver": "https://map.naver.com/v5/entry/place/1529124483?c=14138928.0264,4512411.0851,15,0,0,0,dh",
     "mapLinkTmap": "https://tmap.life/359a35e"

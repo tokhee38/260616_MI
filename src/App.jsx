@@ -45,11 +45,11 @@ function App() {
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showManualCopyModal, setShowManualCopyModal] = useState(false);
   const [manualCopyText, setManualCopyText] = useState('');
-  
+
   // Gallery Expand State
   const [isGalleryExpanded, setIsGalleryExpanded] = useState(false);
   const [draggedItemIndex, setDraggedItemIndex] = useState(null);
-  
+
   // Lightbox Gallery State
   const [lightbox, setLightbox] = useState({ isOpen: false, index: 0 });
 
@@ -78,6 +78,114 @@ function App() {
   const [guestbookForm, setGuestbookForm] = useState({ name: '', password: '', message: '' });
   const [guestbookList, setGuestbookList] = useState([]);
   const [gbLoading, setGbLoading] = useState(false);
+
+  // Naver Map States & Refs
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const mapRef = useRef(null);
+
+  // Dynamically load Naver Map API Script when naverClientId exists
+  useEffect(() => {
+    if (!config.location.naverClientId) {
+      setMapLoaded(false);
+      return;
+    }
+
+    if (window.naver && window.naver.maps) {
+      setMapLoaded(true);
+      return;
+    }
+
+    const scriptId = 'naver-map-script';
+    let script = document.getElementById(scriptId);
+
+    const handleScriptLoad = () => {
+      setMapLoaded(true);
+    };
+
+    if (!script) {
+      script = document.createElement('script');
+      script.id = scriptId;
+      script.type = 'text/javascript';
+      script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${config.location.naverClientId}`;
+      script.async = true;
+      script.onload = handleScriptLoad;
+      script.onerror = (err) => {
+        console.error('Failed to load Naver Map script:', err);
+      };
+      document.head.appendChild(script);
+    } else {
+      script.addEventListener('load', handleScriptLoad);
+    }
+
+    return () => {
+      if (script) {
+        script.removeEventListener('load', handleScriptLoad);
+      }
+    };
+  }, [config.location.naverClientId]);
+
+  // Initialize Naver Map
+  useEffect(() => {
+    if (mapLoaded && mapRef.current && window.naver && window.naver.maps) {
+      const latitude = parseFloat(config.location.latitude) || 37.5238;
+      const longitude = parseFloat(config.location.longitude) || 127.0279;
+      const center = new window.naver.maps.LatLng(latitude, longitude);
+
+      const mapOptions = {
+        center: center,
+        zoom: 16,
+        minZoom: 10,
+        maxZoom: 20,
+        draggable: true,
+        pinchZoom: true,
+        scrollWheel: true,
+        keyboardShortcuts: true,
+        disableDoubleTapZoom: false,
+        disableDoubleClickZoom: false,
+        zoomControl: true,
+        zoomControlOptions: {
+          position: window.naver.maps.Position.TOP_RIGHT
+        }
+      };
+
+      const map = new window.naver.maps.Map(mapRef.current, mapOptions);
+
+      // Create marker
+      const marker = new window.naver.maps.Marker({
+        position: center,
+        map: map,
+        title: config.location.hallName || '식장'
+      });
+
+      // Create info window
+      const infoWindow = new window.naver.maps.InfoWindow({
+        content: `
+          <div style="padding:10px; min-width:150px; line-height:150%; text-align:center; font-family:'Gowun Dodum',sans-serif; font-size:12px; border:none;">
+            <strong style="color:#4e4449;">${config.location.hallName}</strong><br/>
+            <span style="color:#8e7f87; font-size:11px;">${config.location.detail || ''}</span>
+          </div>
+        `,
+        borderWidth: 1,
+        borderColor: '#eedfd3',
+        backgroundColor: "white",
+        disableAnchor: false,
+        pixelOffset: new window.naver.maps.Point(0, -10)
+      });
+
+      // Open InfoWindow immediately
+      infoWindow.open(map, marker);
+
+      // Re-center on map resize
+      const handleResize = () => {
+        map.setCenter(center);
+      };
+      window.addEventListener('resize', handleResize);
+
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }
+  }, [mapLoaded, config.location.latitude, config.location.longitude, config.location.hallName, config.location.detail]);
 
   // Dynamically update document title based on config names
   useEffect(() => {
@@ -127,7 +235,7 @@ function App() {
       const now = new Date();
       const weddingDate = new Date(config.weddingDate);
       const diff = weddingDate.getTime() - now.getTime();
-      
+
       if (diff <= 0) {
         const absoluteDiff = Math.abs(diff);
         const days = Math.floor(absoluteDiff / (1000 * 60 * 60 * 24));
@@ -253,7 +361,7 @@ function App() {
   const handleRsvpSubmit = async (e) => {
     e.preventDefault();
     if (!rsvpForm.name.trim()) return alert('성함을 입력해 주세요.');
-    
+
     setRsvpLoading(true);
 
     if (sheetUrl) {
@@ -275,7 +383,7 @@ function App() {
     const localRsvps = JSON.parse(localStorage.getItem('invitation_rsvp') || '[]');
     localRsvps.push({ ...rsvpForm, timestamp: new Date().toISOString() });
     localStorage.setItem('invitation_rsvp', JSON.stringify(localRsvps));
-    
+
     setRsvpSuccess(true);
     setRsvpLoading(false);
 
@@ -339,7 +447,7 @@ function App() {
   const handleDeleteMessage = async (id, originalPassword) => {
     const passwordInput = prompt('삭제용 비밀번호를 입력해 주세요:');
     if (passwordInput === null) return;
-    
+
     if (passwordInput !== originalPassword) {
       return alert('비밀번호가 일치하지 않습니다.');
     }
@@ -463,7 +571,7 @@ function App() {
     try {
       const compressionPromises = files.map(file => compressImageFile(file, 1200, 1200, 0.75));
       const compressedImages = await Promise.all(compressionPromises);
-      
+
       setConfig(prev => ({
         ...prev,
         images: {
@@ -506,7 +614,7 @@ function App() {
       const updatedGallery = [...prev.images.gallery];
       const [draggedItem] = updatedGallery.splice(draggedItemIndex, 1);
       updatedGallery.splice(targetIndex, 0, draggedItem);
-      
+
       return {
         ...prev,
         images: {
@@ -520,7 +628,7 @@ function App() {
   // Inline inputs renderer
   const renderEditableText = (section, field, isTextArea = false) => {
     const val = section ? config[section][field] : config[field];
-    
+
     if (isEditMode) {
       if (isTextArea) {
         return (
@@ -546,7 +654,7 @@ function App() {
         />
       );
     }
-    
+
     return isTextArea ? (
       <span style={{ whiteSpace: 'pre-wrap' }}>{val}</span>
     ) : (
@@ -668,21 +776,21 @@ function App() {
     try {
       const date = new Date(dateStr);
       if (isNaN(date.getTime())) return dateStr;
-      
+
       const year = date.getFullYear();
       const month = date.getMonth() + 1;
       const day = date.getDate();
-      
+
       const weekDays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
       const dayOfWeek = weekDays[date.getDay()];
-      
+
       const hours = date.getHours();
       const minutes = String(date.getMinutes()).padStart(2, '0');
       const ampm = hours >= 12 ? '오후' : '오전';
       const displayHours = hours % 12 === 0 ? 12 : hours % 12;
-      
+
       return `${year}. ${String(month).padStart(2, '0')}. ${String(day).padStart(2, '0')}. ${dayOfWeek} ${ampm} ${displayHours}시 ${minutes}분`;
-    } catch(e) {
+    } catch (e) {
       return dateStr;
     }
   };
@@ -711,7 +819,7 @@ function App() {
     else if (idx === 3) fallbackAsset = defaultGallery4;
     else if (idx === 4) fallbackAsset = defaultGallery5;
     else if (idx === 5) fallbackAsset = defaultGallery6;
-    
+
     return {
       src: getImageSrc(imgVal, fallbackAsset),
       caption: `우리들의 소중한 순간 #${idx + 1}`
@@ -741,9 +849,9 @@ function App() {
   return (
     <div className={isEditMode ? 'edit-active' : ''}>
       {/* Background Audio */}
-      <audio 
+      <audio
         ref={audioRef}
-        src={config.bgmUrl} 
+        src={config.bgmUrl}
         loop
       />
 
@@ -775,24 +883,24 @@ function App() {
       <section className="cover-section animate-fade-in">
         <div className="cover-image-container">
           <div className="image-edit-wrapper">
-            <img 
-              src={getImageSrc(config.images.mainBanner, defaultBanner)} 
-              className="cover-image" 
-              alt="결혼 청첩장 메인 이미지" 
+            <img
+              src={getImageSrc(config.images.mainBanner, defaultBanner)}
+              className="cover-image"
+              alt="결혼 청첩장 메인 이미지"
             />
             {isEditMode && (
               <div className="image-edit-overlay">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="image-edit-btn"
                   onClick={() => document.getElementById('upload-main-banner').click()}
                 >
                   사진 가져오기 📷
                 </button>
-                <input 
-                  type="file" 
-                  id="upload-main-banner" 
-                  style={{ display: 'none' }} 
+                <input
+                  type="file"
+                  id="upload-main-banner"
+                  style={{ display: 'none' }}
                   accept="image/*"
                   onChange={(e) => handleImageUpload(e, 'mainBanner')}
                 />
@@ -800,7 +908,7 @@ function App() {
             )}
           </div>
         </div>
-        
+
         <div className="cover-info">
           <p className="cover-title-en">Save the Date</p>
           <h1 className="cover-names">
@@ -813,7 +921,7 @@ function App() {
               {isEditMode ? (
                 <div>
                   <label style={{ fontSize: '11px', marginBottom: '2px', textAlign: 'center' }}>결혼 일시 설정</label>
-                  <input 
+                  <input
                     type="datetime-local"
                     className="edit-input-inline"
                     value={new Date(new Date(config.weddingDate).getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16)}
@@ -869,8 +977,8 @@ function App() {
         </div>
 
         <div className="contact-button-container">
-          <button 
-            type="button" 
+          <button
+            type="button"
             className="btn btn-secondary contact-trigger-btn"
             onClick={() => setShowContactModal(true)}
           >
@@ -890,24 +998,24 @@ function App() {
             <div className="profile-badge">GROOM</div>
             <div className="profile-avatar-container">
               <div className="image-edit-wrapper">
-                <img 
-                  src={getImageSrc(config.images.groomAvatar, defaultGroomAvatar)} 
-                  className="profile-avatar" 
-                  alt="신랑 프로필" 
+                <img
+                  src={getImageSrc(config.images.groomAvatar, defaultGroomAvatar)}
+                  className="profile-avatar"
+                  alt="신랑 프로필"
                 />
                 {isEditMode && (
                   <div className="image-edit-overlay">
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="image-edit-btn"
                       onClick={() => document.getElementById('upload-groom-avatar').click()}
                     >
                       사진 변경 📷
                     </button>
-                    <input 
-                      type="file" 
-                      id="upload-groom-avatar" 
-                      style={{ display: 'none' }} 
+                    <input
+                      type="file"
+                      id="upload-groom-avatar"
+                      style={{ display: 'none' }}
                       accept="image/*"
                       onChange={(e) => handleImageUpload(e, 'groomAvatar')}
                     />
@@ -924,24 +1032,24 @@ function App() {
             <div className="profile-badge" style={{ backgroundColor: 'var(--primary)' }}>BRIDE</div>
             <div className="profile-avatar-container" style={{ borderColor: 'var(--primary-light)' }}>
               <div className="image-edit-wrapper">
-                <img 
-                  src={getImageSrc(config.images.brideAvatar, defaultBrideAvatar)} 
-                  className="profile-avatar" 
-                  alt="신부 프로필" 
+                <img
+                  src={getImageSrc(config.images.brideAvatar, defaultBrideAvatar)}
+                  className="profile-avatar"
+                  alt="신부 프로필"
                 />
                 {isEditMode && (
                   <div className="image-edit-overlay">
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="image-edit-btn"
                       onClick={() => document.getElementById('upload-bride-avatar').click()}
                     >
                       사진 변경 📷
                     </button>
-                    <input 
-                      type="file" 
-                      id="upload-bride-avatar" 
-                      style={{ display: 'none' }} 
+                    <input
+                      type="file"
+                      id="upload-bride-avatar"
+                      style={{ display: 'none' }}
                       accept="image/*"
                       onChange={(e) => handleImageUpload(e, 'brideAvatar')}
                     />
@@ -975,7 +1083,7 @@ function App() {
               if (item.day === null) {
                 return <div key={`empty-${idx}`} className="calendar-day calendar-day-empty"></div>;
               }
-              
+
               let dayClass = 'calendar-day';
               if (item.isWedding) dayClass += ' calendar-day-wedding';
               else if (item.isSun) dayClass += ' calendar-day-sun';
@@ -996,7 +1104,7 @@ function App() {
           <div className="dday-title">
             {timeLeft.isPast ? '💍 결혼식 당일 / 이후' : '⏱️ 결혼식까지 남은 시간'}
           </div>
-          
+
           {timeLeft.isPast ? (
             <div className="dday-banner-text">
               축하해 주셔서 감사합니다! <br />
@@ -1029,7 +1137,7 @@ function App() {
       <section className="gallery-section">
         <h2 className="section-title">갤러리</h2>
         <p className="section-subtitle">Our Wedding Gallery</p>
-        
+
         {/* Multi-image upload toolbar for Admin in Edit Mode */}
         {isEditMode && (
           <div className="card" style={{ marginBottom: '16px', padding: '16px', textAlign: 'center', border: '1.5px dashed var(--primary)' }}>
@@ -1037,17 +1145,17 @@ function App() {
             <p style={{ fontSize: '11px', color: 'var(--text-light)', margin: '4px 0 12px' }}>
               여러 장의 사진을 한 번에 선택하여 업로드할 수 있습니다. 기존 사진들은 모두 교체됩니다.
             </p>
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="btn btn-primary btn-sm"
               onClick={() => document.getElementById('upload-gallery-multi').click()}
             >
               PC에서 사진 불러오기 📁
             </button>
-            <input 
-              type="file" 
-              id="upload-gallery-multi" 
-              style={{ display: 'none' }} 
+            <input
+              type="file"
+              id="upload-gallery-multi"
+              style={{ display: 'none' }}
               accept="image/*"
               multiple
               onChange={handleMultipleImagesUpload}
@@ -1066,8 +1174,8 @@ function App() {
         ) : (
           <div className="gallery-grid">
             {visibleImages.map((img, idx) => (
-              <div 
-                key={idx} 
+              <div
+                key={idx}
                 className="gallery-item"
                 draggable={isEditMode}
                 onDragStart={(e) => handleDragStart(idx, e)}
@@ -1077,7 +1185,7 @@ function App() {
                 onClick={() => setLightbox({ isOpen: true, index: idx })}
               >
                 <img src={img.src} className="gallery-img" alt={img.caption} />
-                
+
                 {/* Delete button (Only visible in Edit Mode) */}
                 {isEditMode && (
                   <button
@@ -1110,8 +1218,8 @@ function App() {
         {/* Show More / Collapse Button */}
         {galleryImages.length > 6 && (
           <div className="contact-button-container" style={{ marginTop: '16px' }}>
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="btn btn-outline btn-sm"
               style={{ width: 'auto', minWidth: '150px' }}
               onClick={() => setIsGalleryExpanded(!isGalleryExpanded)}
@@ -1135,36 +1243,85 @@ function App() {
             {renderEditableLocation('address')}
           </p>
 
-          {/* Real Map Image Link (Direct Naver Map Integration) */}
+          {/* Dynamic Map (Naver Map API) or Static Fallback Image */}
           <div className="map-image-container" style={{ position: 'relative', width: '100%', height: '240px', borderRadius: '16px', overflow: 'hidden', marginBottom: '16px', border: '1px solid var(--border)' }}>
-            <img 
-              src={naverMapImg} 
-              alt="네이버 지도 약도" 
-              style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer' }}
-              onClick={() => window.open(config.location.mapLinkNaver, '_blank')}
-            />
-            <div 
+            {config.location.naverClientId && mapLoaded ? (
+              <div
+                ref={mapRef}
+                style={{ width: '100%', height: '100%' }}
+              />
+            ) : (
+              <img
+                src={naverMapImg}
+                alt="네이버 지도 약도"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer' }}
+                onClick={() => window.open(config.location.mapLinkNaver, '_blank')}
+              />
+            )}
+
+            {/* Address Copy overlay button */}
+            <div
               className="map-overlay-btn"
               onClick={() => copyText(config.location.address, '식장 주소가 복사되었습니다! 📋')}
-              style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(255,255,255,0.95)', border: '1px solid var(--border)', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', boxShadow: 'var(--shadow-sm)' }}
+              style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(255,255,255,0.95)', border: '1px solid var(--border)', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', boxShadow: 'var(--shadow-sm)', zIndex: 10 }}
             >
               📍 주소 복사
             </div>
-            <div
-              style={{ position: 'absolute', top: '10px', left: '10px', background: 'rgba(78, 68, 73, 0.85)', color: 'white', padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', pointerEvents: 'none' }}
-            >
-              지도를 터치하면 네이버 지도로 연결됩니다
-            </div>
+
+            {/* Instruction tooltip (only shown for fallback image) */}
+            {(!config.location.naverClientId || !mapLoaded) && (
+              <div
+                style={{ position: 'absolute', top: '10px', left: '10px', background: 'rgba(78, 68, 73, 0.85)', color: 'white', padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', pointerEvents: 'none' }}
+              >
+                지도를 터치하면 네이버 지도로 연결됩니다
+              </div>
+            )}
           </div>
 
           {/* Navigation Links settings */}
           {isEditMode && (
             <div className="card" style={{ fontSize: '12px', border: '1px solid var(--primary)' }}>
-              <strong style={{ color: 'var(--primary-dark)' }}>🗺️ 네비게이션 앱 링크 설정</strong>
-              <div className="form-group" style={{ marginTop: '8px' }}>
+              <strong style={{ color: 'var(--primary-dark)', display: 'block', marginBottom: '8px' }}>🗺️ 네이버 동적 지도 설정 (API)</strong>
+              <div className="form-group">
+                <label style={{ fontSize: '11px' }}>네이버 지도 Client ID</label>
+                <input
+                  type="text"
+                  className="edit-input-inline"
+                  placeholder="발급받은 Client ID 입력 (미입력 시 이미지 약도 노출)"
+                  value={config.location.naverClientId || ''}
+                  onChange={(e) => updateLocationField('naverClientId', e.target.value)}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label style={{ fontSize: '11px' }}>위도 (Latitude)</label>
+                  <input
+                    type="number"
+                    step="0.0001"
+                    className="edit-input-inline"
+                    value={config.location.latitude}
+                    onChange={(e) => updateLocationField('latitude', parseFloat(e.target.value) || 0)}
+                  />
+                </div>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label style={{ fontSize: '11px' }}>경도 (Longitude)</label>
+                  <input
+                    type="number"
+                    step="0.0001"
+                    className="edit-input-inline"
+                    value={config.location.longitude}
+                    onChange={(e) => updateLocationField('longitude', parseFloat(e.target.value) || 0)}
+                  />
+                </div>
+              </div>
+
+              <hr style={{ margin: '12px 0', borderColor: 'var(--border)', opacity: 0.5 }} />
+
+              <strong style={{ color: 'var(--primary-dark)', display: 'block', marginBottom: '8px' }}>🗺️ 네비게이션 앱 링크 설정</strong>
+              <div className="form-group">
                 <label style={{ fontSize: '11px' }}>카카오맵 이동 링크</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   className="edit-input-inline"
                   value={config.location.mapLinkKakao}
                   onChange={(e) => updateLocationField('mapLinkKakao', e.target.value)}
@@ -1172,8 +1329,8 @@ function App() {
               </div>
               <div className="form-group">
                 <label style={{ fontSize: '11px' }}>네이버 지도 이동 링크</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   className="edit-input-inline"
                   value={config.location.mapLinkNaver}
                   onChange={(e) => updateLocationField('mapLinkNaver', e.target.value)}
@@ -1181,8 +1338,8 @@ function App() {
               </div>
               <div className="form-group">
                 <label style={{ fontSize: '11px' }}>티맵 이동 링크</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   className="edit-input-inline"
                   value={config.location.mapLinkTmap}
                   onChange={(e) => updateLocationField('mapLinkTmap', e.target.value)}
@@ -1236,14 +1393,14 @@ function App() {
       <section className="rsvp-section" style={{ backgroundColor: 'var(--primary-light)' }}>
         <h2 className="section-title">참석 의사 전달하기</h2>
         <p className="section-subtitle" style={{ color: 'var(--primary-dark)' }}>RSVP</p>
-        
+
         <p style={{ fontSize: '13px', textAlign: 'center', marginBottom: '20px', lineHeight: 1.6 }}>
           신랑 신부에게 참석 여부를 전달해 주세요.<br />
           식사 준비 및 좌석 배치에 큰 도움이 됩니다.
         </p>
 
-        <button 
-          type="button" 
+        <button
+          type="button"
           className="btn btn-primary rsvp-modal-trigger-btn"
           onClick={() => setShowRsvpModal(true)}
         >
@@ -1261,9 +1418,9 @@ function App() {
           <div className="guestbook-input-row">
             <div className="form-group">
               <label>이름</label>
-              <input 
-                type="text" 
-                placeholder="성함" 
+              <input
+                type="text"
+                placeholder="성함"
                 value={guestbookForm.name}
                 onChange={(e) => setGuestbookForm(prev => ({ ...prev, name: e.target.value }))}
                 required
@@ -1271,9 +1428,9 @@ function App() {
             </div>
             <div className="form-group">
               <label>비밀번호</label>
-              <input 
-                type="password" 
-                placeholder="4자리 숫자" 
+              <input
+                type="password"
+                placeholder="4자리 숫자"
                 value={guestbookForm.password}
                 onChange={(e) => setGuestbookForm(prev => ({ ...prev, password: e.target.value }))}
                 required
@@ -1282,16 +1439,16 @@ function App() {
           </div>
           <div className="form-group">
             <label>메시지</label>
-            <textarea 
-              rows="3" 
-              placeholder="따뜻한 축하의 한마디를 남겨주세요." 
+            <textarea
+              rows="3"
+              placeholder="따뜻한 축하의 한마디를 남겨주세요."
               value={guestbookForm.message}
               onChange={(e) => setGuestbookForm(prev => ({ ...prev, message: e.target.value }))}
               required
             />
           </div>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="btn btn-primary btn-sm"
             disabled={gbLoading}
           >
@@ -1312,8 +1469,8 @@ function App() {
                     <span className="guestbook-card-date">
                       {item.timestamp ? new Date(item.timestamp).toLocaleDateString() : '방금 전'}
                     </span>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="guestbook-card-delete-btn"
                       onClick={() => handleDeleteMessage(item.id, item.password)}
                     >
@@ -1360,8 +1517,8 @@ function App() {
                       <span className="editable-area">{renderEditableText('groom', 'bankName')}</span>{' '}
                       <span className="editable-area">{renderEditableText('groom', 'bankAccount')}</span>
                     </span>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="account-copy-btn"
                       onClick={() => copyText(`${config.groom.bankName} ${config.groom.bankAccount}`)}
                     >
@@ -1383,8 +1540,8 @@ function App() {
                       <span className="editable-area">{renderEditableText('groom', 'fatherBankName')}</span>{' '}
                       <span className="editable-area">{renderEditableText('groom', 'fatherBankAccount')}</span>
                     </span>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="account-copy-btn"
                       onClick={() => copyText(`${config.groom.fatherBankName} ${config.groom.fatherBankAccount}`)}
                     >
@@ -1406,8 +1563,8 @@ function App() {
                       <span className="editable-area">{renderEditableText('groom', 'motherBankName')}</span>{' '}
                       <span className="editable-area">{renderEditableText('groom', 'motherBankAccount')}</span>
                     </span>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="account-copy-btn"
                       onClick={() => copyText(`${config.groom.motherBankName} ${config.groom.motherBankAccount}`)}
                     >
@@ -1440,8 +1597,8 @@ function App() {
                       <span className="editable-area">{renderEditableText('bride', 'bankName')}</span>{' '}
                       <span className="editable-area">{renderEditableText('bride', 'bankAccount')}</span>
                     </span>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="account-copy-btn"
                       onClick={() => copyText(`${config.bride.bankName} ${config.bride.bankAccount}`)}
                     >
@@ -1463,8 +1620,8 @@ function App() {
                       <span className="editable-area">{renderEditableText('bride', 'fatherBankName')}</span>{' '}
                       <span className="editable-area">{renderEditableText('bride', 'fatherBankAccount')}</span>
                     </span>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="account-copy-btn"
                       onClick={() => copyText(`${config.bride.fatherBankName} ${config.bride.fatherBankAccount}`)}
                     >
@@ -1486,8 +1643,8 @@ function App() {
                       <span className="editable-area">{renderEditableText('bride', 'motherBankName')}</span>{' '}
                       <span className="editable-area">{renderEditableText('bride', 'motherBankAccount')}</span>
                     </span>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="account-copy-btn"
                       onClick={() => copyText(`${config.bride.motherBankName} ${config.bride.motherBankAccount}`)}
                     >
@@ -1507,9 +1664,9 @@ function App() {
         <p style={{ marginTop: '4px', fontSize: '11px', opacity: 0.8 }}>
           Copyright © 2026. All rights reserved.
         </p>
-        
-        <button 
-          type="button" 
+
+        <button
+          type="button"
           className="guide-toggle-btn"
           onClick={() => setShowGuideModal(true)}
         >
@@ -1522,9 +1679,9 @@ function App() {
         <div className="edit-control-bar">
           <div className="edit-control-header">
             <span>⚙️ 모바일 청첩장 실시간 편집 패널</span>
-            <button 
+            <button
               type="button"
-              className="btn btn-secondary btn-sm" 
+              className="btn btn-secondary btn-sm"
               style={{ width: 'auto', padding: '4px 8px' }}
               onClick={() => setIsEditMode(!isEditMode)}
             >
@@ -1535,8 +1692,8 @@ function App() {
             <>
               <div className="form-group" style={{ margin: 0 }}>
                 <label style={{ fontSize: '11px', marginBottom: '2px' }}>배경음악 URL 설정</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   className="edit-input-inline"
                   style={{ fontSize: '11px' }}
                   value={config.bgmUrl}
@@ -1544,29 +1701,29 @@ function App() {
                 />
               </div>
               <div className="edit-control-buttons">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="edit-control-btn edit-control-btn-server"
                   onClick={saveConfigToServer}
                 >
                   서버에 즉시 저장 ☁️
                 </button>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="edit-control-btn edit-control-btn-save"
                   onClick={saveConfigLocally}
                 >
                   기기에 임시 저장
                 </button>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="edit-control-btn edit-control-btn-copy"
                   onClick={copyConfigJson}
                 >
                   배포용 설정 복사 (JSON)
                 </button>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="edit-control-btn edit-control-btn-reset"
                   onClick={resetConfig}
                 >
@@ -1586,7 +1743,7 @@ function App() {
           <div className="contact-modal" onClick={(e) => e.stopPropagation()}>
             <button type="button" className="contact-modal-close" onClick={() => setShowContactModal(false)}>×</button>
             <h3 className="contact-modal-title">📞 축하 연락처</h3>
-            
+
             <div className="contact-list">
               <div className="contact-item">
                 <div className="contact-info">
@@ -1594,11 +1751,11 @@ function App() {
                   <span className="contact-role">신랑</span>
                   {isEditMode && (
                     <div style={{ marginTop: '4px' }}>
-                      <input 
-                        type="text" 
-                        className="edit-input-inline" 
-                        style={{ fontSize: '11px' }} 
-                        value={config.groom.phone} 
+                      <input
+                        type="text"
+                        className="edit-input-inline"
+                        style={{ fontSize: '11px' }}
+                        value={config.groom.phone}
                         onChange={(e) => updateField('groom', 'phone', e.target.value)}
                         placeholder="신랑 전화번호"
                       />
@@ -1617,11 +1774,11 @@ function App() {
                   <span className="contact-role">신부</span>
                   {isEditMode && (
                     <div style={{ marginTop: '4px' }}>
-                      <input 
-                        type="text" 
-                        className="edit-input-inline" 
-                        style={{ fontSize: '11px' }} 
-                        value={config.bride.phone} 
+                      <input
+                        type="text"
+                        className="edit-input-inline"
+                        style={{ fontSize: '11px' }}
+                        value={config.bride.phone}
                         onChange={(e) => updateField('bride', 'phone', e.target.value)}
                         placeholder="신부 전화번호"
                       />
@@ -1676,7 +1833,7 @@ function App() {
                 </div>
               )}
             </div>
-            
+
             <p style={{ fontSize: '11px', color: 'var(--text-light)', marginTop: '20px', textAlign: 'center' }}>
               축하 전화를 드리거나 따뜻한 문자를 보내보세요!
             </p>
@@ -1689,7 +1846,7 @@ function App() {
         <div className="contact-modal-overlay" onClick={() => setShowRsvpModal(false)}>
           <div className="contact-modal" style={{ maxWidth: '440px' }} onClick={(e) => e.stopPropagation()}>
             <button type="button" className="contact-modal-close" onClick={() => setShowRsvpModal(false)}>×</button>
-            
+
             {rsvpSuccess ? (
               <div style={{ textAlign: 'center', padding: '30px 10px' }}>
                 <span style={{ fontSize: '40px' }}>🎉</span>
@@ -1703,9 +1860,9 @@ function App() {
                   {/* Name */}
                   <div className="form-group">
                     <label>성함</label>
-                    <input 
-                      type="text" 
-                      placeholder="참석자 성함" 
+                    <input
+                      type="text"
+                      placeholder="참석자 성함"
                       value={rsvpForm.name}
                       onChange={(e) => setRsvpForm(prev => ({ ...prev, name: e.target.value }))}
                       required
@@ -1717,20 +1874,20 @@ function App() {
                     <label>구분</label>
                     <div className="radio-group">
                       <div className="radio-option">
-                        <input 
-                          type="radio" 
-                          id="rel-groom" 
-                          name="relation" 
+                        <input
+                          type="radio"
+                          id="rel-groom"
+                          name="relation"
                           checked={rsvpForm.relation === 'groom'}
                           onChange={() => setRsvpForm(prev => ({ ...prev, relation: 'groom' }))}
                         />
                         <label htmlFor="rel-groom" className="radio-label">신랑측</label>
                       </div>
                       <div className="radio-option">
-                        <input 
-                          type="radio" 
-                          id="rel-bride" 
-                          name="relation" 
+                        <input
+                          type="radio"
+                          id="rel-bride"
+                          name="relation"
                           checked={rsvpForm.relation === 'bride'}
                           onChange={() => setRsvpForm(prev => ({ ...prev, relation: 'bride' }))}
                         />
@@ -1744,20 +1901,20 @@ function App() {
                     <label>참석 여부</label>
                     <div className="radio-group">
                       <div className="radio-option">
-                        <input 
-                          type="radio" 
-                          id="att-yes" 
-                          name="attending" 
+                        <input
+                          type="radio"
+                          id="att-yes"
+                          name="attending"
                           checked={rsvpForm.attending === 'yes'}
                           onChange={() => setRsvpForm(prev => ({ ...prev, attending: 'yes' }))}
                         />
                         <label htmlFor="att-yes" className="radio-label">참석</label>
                       </div>
                       <div className="radio-option">
-                        <input 
-                          type="radio" 
-                          id="att-no" 
-                          name="attending" 
+                        <input
+                          type="radio"
+                          id="att-no"
+                          name="attending"
                           checked={rsvpForm.attending === 'no'}
                           onChange={() => setRsvpForm(prev => ({ ...prev, attending: 'no' }))}
                         />
@@ -1771,7 +1928,7 @@ function App() {
                     <>
                       <div className="form-group">
                         <label>동반 인원수 (본인 포함)</label>
-                        <select 
+                        <select
                           value={rsvpForm.guestsCount}
                           onChange={(e) => setRsvpForm(prev => ({ ...prev, guestsCount: parseInt(e.target.value) }))}
                         >
@@ -1786,30 +1943,30 @@ function App() {
                         <label>식사 여부</label>
                         <div className="radio-group">
                           <div className="radio-option">
-                            <input 
-                              type="radio" 
-                              id="meal-yes" 
-                              name="meal" 
+                            <input
+                              type="radio"
+                              id="meal-yes"
+                              name="meal"
                               checked={rsvpForm.meal === 'yes'}
                               onChange={() => setRsvpForm(prev => ({ ...prev, meal: 'yes' }))}
                             />
                             <label htmlFor="meal-yes" className="radio-label">식사함</label>
                           </div>
                           <div className="radio-option">
-                            <input 
-                              type="radio" 
-                              id="meal-no" 
-                              name="meal" 
+                            <input
+                              type="radio"
+                              id="meal-no"
+                              name="meal"
                               checked={rsvpForm.meal === 'no'}
                               onChange={() => setRsvpForm(prev => ({ ...prev, meal: 'no' }))}
                             />
                             <label htmlFor="meal-no" className="radio-label">안함</label>
                           </div>
                           <div className="radio-option">
-                            <input 
-                              type="radio" 
-                              id="meal-undecided" 
-                              name="meal" 
+                            <input
+                              type="radio"
+                              id="meal-undecided"
+                              name="meal"
                               checked={rsvpForm.meal === 'undecided'}
                               onChange={() => setRsvpForm(prev => ({ ...prev, meal: 'undecided' }))}
                             />
@@ -1823,16 +1980,16 @@ function App() {
                   {/* Message to Couple */}
                   <div className="form-group">
                     <label>축하 메시지 / 전달사항</label>
-                    <textarea 
-                      rows="2" 
-                      placeholder="신랑 신부에게 전하실 말씀" 
+                    <textarea
+                      rows="2"
+                      placeholder="신랑 신부에게 전하실 말씀"
                       value={rsvpForm.message}
                       onChange={(e) => setRsvpForm(prev => ({ ...prev, message: e.target.value }))}
                     />
                   </div>
 
-                  <button 
-                    type="submit" 
+                  <button
+                    type="submit"
                     className="btn btn-primary"
                     disabled={rsvpLoading}
                   >
@@ -1847,37 +2004,37 @@ function App() {
 
       {/* 3. Gallery Lightbox Modal (loop-based navigation) */}
       {lightbox.isOpen && (
-        <div 
-          className="lightbox-overlay" 
+        <div
+          className="lightbox-overlay"
           onClick={() => setLightbox({ isOpen: false, index: 0 })}
         >
           <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="lightbox-close"
               onClick={() => setLightbox({ isOpen: false, index: 0 })}
             >
               ×
             </button>
-            <img 
-              src={galleryImages[lightbox.index].src} 
-              className="lightbox-img" 
-              alt={galleryImages[lightbox.index].caption} 
+            <img
+              src={galleryImages[lightbox.index].src}
+              className="lightbox-img"
+              alt={galleryImages[lightbox.index].caption}
             />
             <div className="lightbox-caption">{galleryImages[lightbox.index].caption}</div>
 
             {/* Loop Slider Navigations */}
             {galleryImages.length > 1 && (
               <>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="lightbox-nav lightbox-prev"
                   onClick={handlePrev}
                 >
                   ‹
                 </button>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="lightbox-nav lightbox-next"
                   onClick={handleNext}
                 >
@@ -1895,17 +2052,17 @@ function App() {
           <div className="contact-modal" style={{ maxWidth: '440px', textAlign: 'left' }} onClick={(e) => e.stopPropagation()}>
             <button type="button" className="contact-modal-close" onClick={() => setShowGuideModal(false)}>×</button>
             <h3 className="contact-modal-title" style={{ fontFamily: 'var(--sans)' }}>⚙️ 구글 스프레드시트 연동</h3>
-            
+
             <div style={{ maxHeight: '400px', overflowY: 'auto', paddingRight: '8px' }}>
               <div className="form-group">
                 <label>구글 스프레드시트 웹 앱 URL</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder="https://script.google.com/macros/s/.../exec"
                   defaultValue={sheetUrl}
                   id="sheet-url-input"
                 />
-                <button 
+                <button
                   type="button"
                   style={{ marginTop: '8px' }}
                   className="btn btn-primary btn-sm"
@@ -1929,7 +2086,7 @@ function App() {
               </div>
 
               <div className="guide-code-box">
-{`function doPost(e) {
+                {`function doPost(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet();
   var data = JSON.parse(e.postData.contents);
   var action = data.action;
@@ -2045,10 +2202,10 @@ function doGet(e) {
                   <li>설명에 버전을 입력하고, **[다음 사용자 서명으로 실행]**을 '나(본인 이메일)'로, **[액세스 권한이 있는 사용자]**를 **'모든 사용자(Anyone)'**로 설정 후 배포합니다.</li>
                   <li>나오는 **웹 앱 URL** 주소를 복사해 상단 입력칸에 넣고 저장해 주세요!</li>
                 </ol>
+              </div>
             </div>
           </div>
         </div>
-      </div>
       )}
 
       {/* 5. Manual Copy Fallback Modal */}
