@@ -17,6 +17,9 @@ import noticeHallImg from './assets/notice_hall.png'
 import noticeMealImg from './assets/notice_meal.png'
 import noticeDressImg from './assets/notice_dress.png'
 
+// Import all gallery images dynamically using Vite glob
+const galleryModules = import.meta.glob('./assets/gallery_*.png', { eager: true });
+
 function App() {
   // Load config from localStorage if exists, otherwise load defaultConfig
   const [config, setConfig] = useState(() => {
@@ -861,6 +864,16 @@ function App() {
     if (val.includes('wedding_main_banner')) return defaultBanner;
     if (val.includes('groom_avatar')) return defaultGroomAvatar;
     if (val.includes('bride_avatar')) return defaultBrideAvatar;
+
+    // Check if it matches gallery modules loaded dynamically
+    const galleryMatch = val.match(/gallery_(\d+)/);
+    if (galleryMatch) {
+      const idx = galleryMatch[1];
+      const path = `./assets/gallery_${idx}.png`;
+      const mod = galleryModules[path];
+      if (mod) return mod.default;
+    }
+
     if (val.includes('gallery_1')) return defaultGallery1;
     if (val.includes('gallery_2')) return defaultGallery2;
     if (val.includes('gallery_3')) return defaultGallery3;
