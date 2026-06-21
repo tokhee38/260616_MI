@@ -683,10 +683,25 @@ function App() {
     return <span>{val}</span>;
   };
 
+  // Helper to save config to localStorage safely (handling QuotaExceededError when base64 images are too large)
+  const safeSaveToLocalStorage = (configObj) => {
+    try {
+      localStorage.setItem('invitation_config', JSON.stringify(configObj));
+      return true;
+    } catch (e) {
+      console.warn('LocalStorage save failed (likely quota exceeded due to base64 images):', e);
+      return false;
+    }
+  };
+
   // Save changes locally
   const saveConfigLocally = () => {
-    localStorage.setItem('invitation_config', JSON.stringify(config));
-    alert('임시 변경사항이 이 기기에 저장되었습니다. 💾\n(배포 시 반영하려면 하단의 [배포용 설정 복사]를 실행해 파일로 덮어씌워야 합니다)');
+    const success = safeSaveToLocalStorage(config);
+    if (success) {
+      alert('임시 변경사항이 이 기기에 저장되었습니다. 💾\n(배포 시 반영하려면 하단의 [배포용 설정 복사]를 실행해 파일로 덮어씌워야 합니다)');
+    } else {
+      alert('⚠️ 기기 임시 저장 제한 알림\n\n등록된 사진들의 용량이 너무 커 브라우저 저장 용량 한도(5MB)를 초과했습니다. 따라서 이 브라우저(기기)의 임시 저장은 건너뛰었지만,\n\n[서버에 즉시 저장 ☁️] 또는 [배포용 설정 복사 (JSON)]를 실행하시면 스프레드시트 서버나 배포 파일에는 정상적으로 전체 사진이 저장 및 복사됩니다!');
+    }
   };
 
   // Save changes directly to Google Sheet server
@@ -721,8 +736,8 @@ function App() {
         })
       });
 
-      // Sync to localStorage
-      localStorage.setItem('invitation_config', JSON.stringify(config));
+      // Sync to localStorage safely
+      safeSaveToLocalStorage(config);
       alert('수정사항이 서버(구글 스프레드시트)에 즉시 저장되었습니다! 🎉\n이제 전 세계 하객들에게 실시간으로 업데이트된 청첩장이 보입니다.');
     } catch (err) {
       console.error('Server save error:', err);
@@ -734,7 +749,7 @@ function App() {
 
   // Export config to copy
   const copyConfigJson = () => {
-    localStorage.setItem('invitation_config', JSON.stringify(config));
+    safeSaveToLocalStorage(config);
     const jsonStr = JSON.stringify(config, null, 2);
     copyToClipboard(jsonStr)
       .then(() => {
