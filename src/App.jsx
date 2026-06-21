@@ -45,7 +45,7 @@ function App() {
   const [likes, setLikes] = useState({ groom: 124, bride: 158 });
   const [showRsvpModal, setShowRsvpModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
-  const [showParentsContact, setShowParentsContact] = useState(false);
+  const [showParentsContact, setShowParentsContact] = useState(true);
   const [activeInfoTab, setActiveInfoTab] = useState('wedding');
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showManualCopyModal, setShowManualCopyModal] = useState(false);
