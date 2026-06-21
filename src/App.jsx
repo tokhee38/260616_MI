@@ -694,6 +694,18 @@ function App() {
     setGbLoading(true);
 
     try {
+      // 1. 서버 연동 상태 및 권한 확인 (403 Forbidden 및 CORS 오류 사전 감지)
+      try {
+        const testRes = await fetch(`${sheetUrl}?action=getConfig`);
+        if (!testRes.ok) {
+          throw new Error(`HTTP error! status: ${testRes.status}`);
+        }
+      } catch (testErr) {
+        console.error('Connection test failed:', testErr);
+        throw new Error('서버(구글 스프레드시트 웹 앱)에 연결할 수 없거나 접근 권한이 없습니다.\n\n구글 앱스 스크립트 배포 창에서 [액세스 권한이 있는 사용자]를 반드시 [모든 사용자(Anyone)]로 설정했는지 확인해 주세요. (소유자 본인으로 로그인된 상태에서만 작동하고 있으면 다른 기기나 모바일에서 반영되지 않습니다.)');
+      }
+
+      // 2. 실제 저장 요청 전송
       await fetch(sheetUrl, {
         method: 'POST',
         mode: 'no-cors',
@@ -709,7 +721,7 @@ function App() {
       alert('수정사항이 서버(구글 스프레드시트)에 즉시 저장되었습니다! 🎉\n이제 전 세계 하객들에게 실시간으로 업데이트된 청첩장이 보입니다.');
     } catch (err) {
       console.error('Server save error:', err);
-      alert('서버 저장 과정 중 문제가 발생했습니다. 구글 앱스 스크립트 웹 앱 설정을 확인해 주세요.');
+      alert(err.message || '서버 저장 과정 중 문제가 발생했습니다. 구글 앱스 스크립트 웹 앱 설정을 확인해 주세요.');
     } finally {
       setGbLoading(false);
     }
@@ -2260,6 +2272,9 @@ function doGet(e) {
                   <li>Apps Script 에디터 우측 상단의 [배포] &gt; [새 배포]를 누릅니다.</li>
                   <li>유형 선택(톱니바퀴)에서 **웹 앱(Web App)**을 선택합니다.</li>
                   <li>설명에 버전을 입력하고, **[다음 사용자 서명으로 실행]**을 '나(본인 이메일)'로, **[액세스 권한이 있는 사용자]**를 **'모든 사용자(Anyone)'**로 설정 후 배포합니다.</li>
+                  <li style={{ color: '#d9534f', fontWeight: 'bold', listStyleType: 'none', marginLeft: '-10px', marginTop: '6px', marginBottom: '6px', fontSize: '11px' }}>
+                    ⚠️ 중요: [액세스 권한이 있는 사용자]를 반드시 '모든 사용자(Anyone)'로 설정하셔야 합니다. 그렇지 않으면 타인이나 모바일 기기에서 403(액세스 거부) 오류가 발생하여 청첩장 업데이트가 불가능합니다.
+                  </li>
                   <li>나오는 **웹 앱 URL** 주소를 복사해 상단 입력칸에 넣고 저장해 주세요!</li>
                 </ol>
               </div>
