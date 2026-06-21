@@ -64,7 +64,7 @@ function App() {
 
   // Google Sheet Webhook endpoint
   const [sheetUrl, setSheetUrl] = useState(() => {
-    return defaultConfig.sheetUrl || localStorage.getItem('invitation_sheet_url') || '';
+    return defaultConfig.sheetUrl || localStorage.getItem('invitation_sheet_url') || 'https://script.google.com/macros/s/AKfycbwn1HPTUOGloTI8efJo1rGm1s-dR1IVeb3GZuSLyd41dFeeZPyHdG7yYFNb1Z7wvPA/exec';
   });
 
   // RSVP Form State
@@ -802,6 +802,33 @@ function App() {
   };
 
   const calendarData = getCalendarData(config.weddingDate);
+
+  // Formatting guestbook date string display safely for all browsers including Safari (iOS)
+  const formatGuestbookDate = (timestamp) => {
+    if (!timestamp) return '방금 전';
+    try {
+      const date = new Date(timestamp);
+      if (!isNaN(date.getTime())) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}.${month}.${day}`;
+      }
+      
+      // Fallback for Korean local spreadsheet formatted dates (e.g. "2026. 6. 21. 오후 3:18:28")
+      const cleaned = String(timestamp).replace(/[오전|오후].*$/, '').trim();
+      const parts = cleaned.match(/\d+/g);
+      if (parts && parts.length >= 3) {
+        const year = parts[0];
+        const month = String(parts[1]).padStart(2, '0');
+        const day = String(parts[2]).padStart(2, '0');
+        return `${year}.${month}.${day}`;
+      }
+    } catch (e) {
+      console.error('Error parsing guestbook date:', e);
+    }
+    return String(timestamp).split(' ')[0] || '방금 전';
+  };
 
   // Formatting date string display
   const formatWeddingDateString = (dateStr) => {
@@ -1732,7 +1759,7 @@ function App() {
                   <span className="guestbook-card-name">{item.name}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span className="guestbook-card-date">
-                      {item.timestamp ? new Date(item.timestamp).toLocaleDateString() : '방금 전'}
+                      {item.timestamp ? formatGuestbookDate(item.timestamp) : '방금 전'}
                     </span>
                     <button
                       type="button"
