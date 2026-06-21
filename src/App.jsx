@@ -13,6 +13,9 @@ import defaultGallery4 from './assets/gallery_4.png'
 import defaultGallery5 from './assets/gallery_5.png'
 import defaultGallery6 from './assets/gallery_6.png'
 import naverMapImg from './assets/naver_map.png'
+import noticeHallImg from './assets/notice_hall.png'
+import noticeMealImg from './assets/notice_meal.png'
+import noticeDressImg from './assets/notice_dress.png'
 
 function App() {
   // Load config from localStorage if exists, otherwise load defaultConfig
@@ -42,6 +45,8 @@ function App() {
   const [likes, setLikes] = useState({ groom: 124, bride: 158 });
   const [showRsvpModal, setShowRsvpModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
+  const [showParentsContact, setShowParentsContact] = useState(false);
+  const [activeInfoTab, setActiveInfoTab] = useState('wedding');
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showManualCopyModal, setShowManualCopyModal] = useState(false);
   const [manualCopyText, setManualCopyText] = useState('');
@@ -988,14 +993,169 @@ function App() {
           </div>
         </div>
 
-        <div className="contact-button-container">
-          <button
-            type="button"
-            className="btn btn-secondary contact-trigger-btn"
-            onClick={() => setShowContactModal(true)}
-          >
-            📞 축하 인사 및 연락하기
-          </button>
+        {/* 축하 인사 및 연락하기 - 페이지 통합 직관 배치 */}
+        <div className="direct-contact-section">
+          <div className="contact-grid-row">
+            {/* Groom side */}
+            <div className="contact-column">
+              <span className="contact-label-title">신랑</span>
+              {isEditMode && (
+                <input
+                  type="text"
+                  className="edit-input-inline"
+                  style={{ fontSize: '11px', padding: '4px 8px', height: '24px', margin: '4px 0', width: '100px', display: 'inline-block' }}
+                  value={config.groom.phone}
+                  onChange={(e) => updateField('groom', 'phone', e.target.value)}
+                  placeholder="신랑 연락처"
+                />
+              )}
+              <div className="contact-action-icons">
+                <a href={`tel:${config.groom.phone}`} className="contact-icon-link" title="전화">
+                  <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/></svg>
+                </a>
+                <a href={`sms:${config.groom.phone}`} className="contact-icon-link" title="문자">
+                  <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </a>
+              </div>
+            </div>
+
+            {/* Bride side */}
+            <div className="contact-column">
+              <span className="contact-label-title">신부</span>
+              {isEditMode && (
+                <input
+                  type="text"
+                  className="edit-input-inline"
+                  style={{ fontSize: '11px', padding: '4px 8px', height: '24px', margin: '4px 0', width: '100px', display: 'inline-block' }}
+                  value={config.bride.phone}
+                  onChange={(e) => updateField('bride', 'phone', e.target.value)}
+                  placeholder="신부 연락처"
+                />
+              )}
+              <div className="contact-action-icons">
+                <a href={`tel:${config.bride.phone}`} className="contact-icon-link" title="전화">
+                  <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/></svg>
+                </a>
+                <a href={`sms:${config.bride.phone}`} className="contact-icon-link" title="문자">
+                  <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Parents toggle bar */}
+          <div className="parents-contact-toggle" onClick={() => setShowParentsContact(!showParentsContact)}>
+            <span>신랑측 혼주</span>
+            <span className="toggle-arrow">
+              {showParentsContact ? '▲' : '▼'}
+            </span>
+            <span>신부측 혼주</span>
+          </div>
+
+          {/* Parents details container */}
+          <div className={`parents-contact-wrapper ${showParentsContact ? 'expanded' : 'collapsed'}`}>
+            <div className="parents-contact-grid">
+              {/* Groom's parents */}
+              <div className="parents-contact-side">
+                {config.groom.fatherName && (
+                  <div className="parent-contact-block">
+                    <span className="parent-name-text">아버지 {config.groom.fatherName}</span>
+                    {isEditMode && (
+                      <input
+                        type="text"
+                        className="edit-input-inline"
+                        style={{ fontSize: '10px', padding: '2px 6px', height: '22px', margin: '2px 0', width: '90px', display: 'inline-block' }}
+                        value={config.groom.fatherPhone}
+                        onChange={(e) => updateField('groom', 'fatherPhone', e.target.value)}
+                        placeholder="연락처"
+                      />
+                    )}
+                    <div className="contact-action-icons">
+                      <a href={`tel:${config.groom.fatherPhone}`} className="contact-icon-link" title="전화">
+                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/></svg>
+                      </a>
+                      <a href={`sms:${config.groom.fatherPhone}`} className="contact-icon-link" title="문자">
+                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                      </a>
+                    </div>
+                  </div>
+                )}
+                {config.groom.motherName && (
+                  <div className="parent-contact-block">
+                    <span className="parent-name-text">어머니 {config.groom.motherName}</span>
+                    {isEditMode && (
+                      <input
+                        type="text"
+                        className="edit-input-inline"
+                        style={{ fontSize: '10px', padding: '2px 6px', height: '22px', margin: '2px 0', width: '90px', display: 'inline-block' }}
+                        value={config.groom.motherPhone}
+                        onChange={(e) => updateField('groom', 'motherPhone', e.target.value)}
+                        placeholder="연락처"
+                      />
+                    )}
+                    <div className="contact-action-icons">
+                      <a href={`tel:${config.groom.motherPhone}`} className="contact-icon-link" title="전화">
+                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/></svg>
+                      </a>
+                      <a href={`sms:${config.groom.motherPhone}`} className="contact-icon-link" title="문자">
+                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Bride's parents */}
+              <div className="parents-contact-side">
+                {config.bride.fatherName && (
+                  <div className="parent-contact-block">
+                    <span className="parent-name-text">아버지 {config.bride.fatherName}</span>
+                    {isEditMode && (
+                      <input
+                        type="text"
+                        className="edit-input-inline"
+                        style={{ fontSize: '10px', padding: '2px 6px', height: '22px', margin: '2px 0', width: '90px', display: 'inline-block' }}
+                        value={config.bride.fatherPhone}
+                        onChange={(e) => updateField('bride', 'fatherPhone', e.target.value)}
+                        placeholder="연락처"
+                      />
+                    )}
+                    <div className="contact-action-icons">
+                      <a href={`tel:${config.bride.fatherPhone}`} className="contact-icon-link" title="전화">
+                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/></svg>
+                      </a>
+                      <a href={`sms:${config.bride.fatherPhone}`} className="contact-icon-link" title="문자">
+                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                      </a>
+                    </div>
+                  </div>
+                )}
+                {config.bride.motherName && (
+                  <div className="parent-contact-block">
+                    <span className="parent-name-text">어머니 {config.bride.motherName}</span>
+                    {isEditMode && (
+                      <input
+                        type="text"
+                        className="edit-input-inline"
+                        style={{ fontSize: '10px', padding: '2px 6px', height: '22px', margin: '2px 0', width: '90px', display: 'inline-block' }}
+                        value={config.bride.motherPhone}
+                        onChange={(e) => updateField('bride', 'motherPhone', e.target.value)}
+                        placeholder="연락처"
+                      />
+                    )}
+                    <div className="contact-action-icons">
+                      <a href={`tel:${config.bride.motherPhone}`} className="contact-icon-link" title="전화">
+                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/></svg>
+                      </a>
+                      <a href={`sms:${config.bride.motherPhone}`} className="contact-icon-link" title="문자">
+                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1165,6 +1325,93 @@ function App() {
             </button>
           </div>
         )}
+      </section>
+
+      {/* 5.5. Information Section (공지사항) */}
+      <section className="information-section">
+        <p className="information-subtitle-en">INFORMATION</p>
+        <h2 className="section-title">공지사항</h2>
+
+        <div className="info-tabs-container">
+          <div className="info-tabs-header">
+            <button 
+              className={`info-tab-btn ${activeInfoTab === 'wedding' ? 'active' : ''}`}
+              onClick={() => setActiveInfoTab('wedding')}
+            >
+              예식 정보
+            </button>
+            <button 
+              className={`info-tab-btn ${activeInfoTab === 'meal' ? 'active' : ''}`}
+              onClick={() => setActiveInfoTab('meal')}
+            >
+              식사 안내
+            </button>
+            <button 
+              className={`info-tab-btn ${activeInfoTab === 'dress' ? 'active' : ''}`}
+              onClick={() => setActiveInfoTab('dress')}
+            >
+              드레스 코드
+            </button>
+          </div>
+
+          <div className="info-tab-content-card">
+            {activeInfoTab === 'wedding' && (
+              <div className="info-tab-pane animate-fade-in">
+                <img src={noticeHallImg} className="info-pane-img" alt="예식 정보" />
+                <div className="info-pane-text-content">
+                  <div className="info-content-group">
+                    <h4 className="info-group-title">💍 예식</h4>
+                    <p className="info-group-text">예식은 11시 30분부터 1시 30분까지<br />1부와 2부로 나누어 진행됩니다.</p>
+                    <p className="info-group-text highlight">하객 여러분들께서는 마지막까지<br />자리를 함께해 주시면 감사하겠습니다.</p>
+                  </div>
+                  <div className="info-content-group">
+                    <h4 className="info-group-title">💌 화환</h4>
+                    <p className="info-group-text">예식장이 협소하여 화환 반입이 불가합니다.<br />생각해 주시는 마음만 감사히 받겠습니다.</p>
+                  </div>
+                  <div className="info-content-group">
+                    <h4 className="info-group-title">🏪 ATM(현금인출기)</h4>
+                    <p className="info-group-text">예식장 내 ATM이 없습니다.<br />도보 3분 거리 GS25편의점 이용 부탁드립니다.</p>
+                  </div>
+                  <div className="info-content-group">
+                    <h4 className="info-group-title">💐 꽃다발 증정</h4>
+                    <p className="info-group-text">예식 후 사용된 꽃은 포장되어<br />꽃다발로 선착순 증정 예정입니다.</p>
+                    <p className="info-group-text highlight">선착순 수량 소진 시, 무대 위 놓여진 꽃을<br />자유롭게 담아가시길 바랍니다.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeInfoTab === 'meal' && (
+              <div className="info-tab-pane animate-fade-in">
+                <img src={noticeMealImg} className="info-pane-img" alt="식사 안내" />
+                <div className="info-pane-text-content">
+                  <div className="info-content-group">
+                    <h4 className="info-group-title">🍴 식사시간</h4>
+                    <p className="info-group-text"><strong>1층</strong> - 1부 예식 이후 식사가 가능합니다.</p>
+                    <p className="info-group-text"><strong>2층</strong> - 예식 전, 11시부터 식사가 가능합니다.</p>
+                    <p className="info-group-text highlight" style={{ marginTop: '12px' }}>※ 예식장 입장 시,<br />식사유무와 관계없이 식권 제출이 필요합니다.</p>
+                    <p className="info-group-text" style={{ marginTop: '8px' }}>식사를 하지 않으시는 하객분들께서는<br />귀가 시 직원에게 식권을 회수하여<br />축의대에 반납 부탁드립니다.</p>
+                  </div>
+                  <div className="info-content-group">
+                    <h4 className="info-group-title">🍰 식전다과</h4>
+                    <p className="info-group-text">뷔페 공간 내 하객 여러분들을 위한<br />웰컴 드링크와 다과가 준비되어 있습니다.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeInfoTab === 'dress' && (
+              <div className="info-tab-pane animate-fade-in">
+                <img src={noticeDressImg} className="info-pane-img" alt="드레스 코드" />
+                <div className="info-pane-text-content" style={{ padding: '16px 8px' }}>
+                  <p className="info-group-text highlight" style={{ fontSize: '15px', marginBottom: '12px' }}>햇살이 들어오는<br />싱그럽고 화사한 홀입니다.</p>
+                  <p className="info-group-text" style={{ fontSize: '14px', marginBottom: '16px' }}>밝은색의 옷이 잘 어울리는 곳이니<br />편하게 자리해 주시기 바랍니다.</p>
+                  <p className="info-group-text highlight-note" style={{ fontSize: '13px', color: 'var(--text-light)', borderTop: '1px dashed var(--border)', paddingTop: '12px', marginTop: '12px' }}>※ 베이지색, 파스텔톤 등<br />자유롭게 착용해 주셔도 됩니다.</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </section>
 
       {/* 6. Location Section */}
