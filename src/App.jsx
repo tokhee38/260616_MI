@@ -840,6 +840,9 @@ function App() {
     if (val.includes('gallery_4')) return defaultGallery4;
     if (val.includes('gallery_5')) return defaultGallery5;
     if (val.includes('gallery_6')) return defaultGallery6;
+    if (val.includes('notice_hall')) return noticeHallImg;
+    if (val.includes('notice_meal')) return noticeMealImg;
+    if (val.includes('notice_dress')) return noticeDressImg;
     return defaultAsset;
   };
 
@@ -1372,7 +1375,27 @@ function App() {
           <div className="info-tab-content-card">
             {activeInfoTab === 'wedding' && (
               <div className="info-tab-pane animate-fade-in">
-                <img src={noticeHallImg} className="info-pane-img" alt="예식 정보" />
+                <div className="image-edit-wrapper" style={{ marginBottom: '20px', borderRadius: '8px', overflow: 'hidden' }}>
+                  <img src={getImageSrc(config.images?.noticeHall, noticeHallImg)} className="info-pane-img" style={{ marginBottom: 0 }} alt="예식 정보" />
+                  {isEditMode && (
+                    <div className="image-edit-overlay">
+                      <button
+                        type="button"
+                        className="image-edit-btn"
+                        onClick={() => document.getElementById('upload-notice-hall').click()}
+                      >
+                        사진 변경 📷
+                      </button>
+                      <input
+                        type="file"
+                        id="upload-notice-hall"
+                        style={{ display: 'none' }}
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, 'noticeHall')}
+                      />
+                    </div>
+                  )}
+                </div>
                 <div className="info-pane-text-content">
                   <div className="info-content-group">
                     <h4 className="info-group-title">💍 예식</h4>
@@ -1398,7 +1421,27 @@ function App() {
 
             {activeInfoTab === 'meal' && (
               <div className="info-tab-pane animate-fade-in">
-                <img src={noticeMealImg} className="info-pane-img" alt="식사 안내" />
+                <div className="image-edit-wrapper" style={{ marginBottom: '20px', borderRadius: '8px', overflow: 'hidden' }}>
+                  <img src={getImageSrc(config.images?.noticeMeal, noticeMealImg)} className="info-pane-img" style={{ marginBottom: 0 }} alt="식사 안내" />
+                  {isEditMode && (
+                    <div className="image-edit-overlay">
+                      <button
+                        type="button"
+                        className="image-edit-btn"
+                        onClick={() => document.getElementById('upload-notice-meal').click()}
+                      >
+                        사진 변경 📷
+                      </button>
+                      <input
+                        type="file"
+                        id="upload-notice-meal"
+                        style={{ display: 'none' }}
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, 'noticeMeal')}
+                      />
+                    </div>
+                  )}
+                </div>
                 <div className="info-pane-text-content">
                   <div className="info-content-group">
                     <h4 className="info-group-title">🍴 식사시간</h4>
@@ -1417,7 +1460,27 @@ function App() {
 
             {activeInfoTab === 'dress' && (
               <div className="info-tab-pane animate-fade-in">
-                <img src={noticeDressImg} className="info-pane-img" alt="드레스 코드" />
+                <div className="image-edit-wrapper" style={{ marginBottom: '20px', borderRadius: '8px', overflow: 'hidden' }}>
+                  <img src={getImageSrc(config.images?.noticeDress, noticeDressImg)} className="info-pane-img" style={{ marginBottom: 0 }} alt="드레스 코드" />
+                  {isEditMode && (
+                    <div className="image-edit-overlay">
+                      <button
+                        type="button"
+                        className="image-edit-btn"
+                        onClick={() => document.getElementById('upload-notice-dress').click()}
+                      >
+                        사진 변경 📷
+                      </button>
+                      <input
+                        type="file"
+                        id="upload-notice-dress"
+                        style={{ display: 'none' }}
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, 'noticeDress')}
+                      />
+                    </div>
+                  )}
+                </div>
                 <div className="info-pane-text-content" style={{ padding: '16px 8px' }}>
                   <p className="info-group-text highlight" style={{ fontSize: '15px', marginBottom: '12px' }}>햇살이 들어오는<br />싱그럽고 화사한 홀입니다.</p>
                   <p className="info-group-text" style={{ fontSize: '14px', marginBottom: '16px' }}>밝은색의 옷이 잘 어울리는 곳이니<br />편하게 자리해 주시기 바랍니다.</p>
