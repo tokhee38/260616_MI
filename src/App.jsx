@@ -2095,9 +2095,66 @@ function App() {
   var action = data.action;
   
   if (action === 'saveConfig') {
+    var configObj = JSON.parse(data.config);
+    
+    // Helper function to save Base64 image to Google Drive and return public link
+    function saveBase64ImageToDrive(base64Data, filename) {
+      try {
+        var splitData = base64Data.split(',');
+        if (splitData.length < 2) return base64Data; // Not a valid Base64 URI
+        
+        var header = splitData[0];
+        var contentType = header.split(':')[1].split(';')[0];
+        var rawBytes = Utilities.base64Decode(splitData[1]);
+        var blob = Utilities.newBlob(rawBytes, contentType, filename);
+        
+        // Find or create folder in Google Drive
+        var folderName = "260613_MobileInvitation_Images";
+        var folders = DriveApp.getFoldersByName(folderName);
+        var folder;
+        if (folders.hasNext()) {
+          folder = folders.next();
+        } else {
+          folder = DriveApp.createFolder(folderName);
+        }
+        
+        var file = folder.createFile(blob);
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+        
+        // Return direct link for embedding in <img> tag
+        return "https://drive.google.com/uc?export=view&id=" + file.getId();
+      } catch (err) {
+        Logger.log("Failed to save image: " + err.message);
+        return base64Data; // Return original on error
+      }
+    }
+    
+    // Process single images if they are Base64
+    if (configObj.images) {
+      if (configObj.images.mainBanner && configObj.images.mainBanner.indexOf('data:image') === 0) {
+        configObj.images.mainBanner = saveBase64ImageToDrive(configObj.images.mainBanner, "mainBanner_" + new Date().getTime());
+      }
+      if (configObj.images.groomAvatar && configObj.images.groomAvatar.indexOf('data:image') === 0) {
+        configObj.images.groomAvatar = saveBase64ImageToDrive(configObj.images.groomAvatar, "groomAvatar_" + new Date().getTime());
+      }
+      if (configObj.images.brideAvatar && configObj.images.brideAvatar.indexOf('data:image') === 0) {
+        configObj.images.brideAvatar = saveBase64ImageToDrive(configObj.images.brideAvatar, "brideAvatar_" + new Date().getTime());
+      }
+      
+      // Process gallery array images
+      if (configObj.images.gallery && Array.isArray(configObj.images.gallery)) {
+        for (var i = 0; i < configObj.images.gallery.length; i++) {
+          var img = configObj.images.gallery[i];
+          if (img && img.indexOf('data:image') === 0) {
+            configObj.images.gallery[i] = saveBase64ImageToDrive(img, "gallery_" + i + "_" + new Date().getTime());
+          }
+        }
+      }
+    }
+    
     var configSheet = sheet.getSheetByName('Config') || sheet.insertSheet('Config');
     configSheet.clear();
-    configSheet.getRange(1, 1).setValue(data.config);
+    configSheet.getRange(1, 1).setValue(JSON.stringify(configObj));
     return ContentService.createTextOutput(JSON.stringify({ status: 'success' }))
       .setMimeType(ContentService.MimeType.JSON);
   }
