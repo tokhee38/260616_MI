@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import './App.css'
 import defaultConfig from './config.json'
 
@@ -66,6 +66,39 @@ function App() {
   const audioRef = useRef(null);
   const touchStartRef = useRef(0);
   const touchEndRef = useRef(0);
+
+  // Opening screen state
+  const [openingState, setOpeningState] = useState(() => {
+    const hasEditParam = window.location.search.includes('tkdahdwlfdl');
+    return hasEditParam ? 'ended' : 'ready';
+  });
+
+  // Cherry Blossom particles generator
+  const cherryPetals = useMemo(() => {
+    return Array.from({ length: 20 }).map((_, idx) => ({
+      id: idx,
+      left: `${Math.random() * 100}%`,
+      size: `${Math.random() * 8 + 6}px`, // 6px to 14px
+      delay: `${Math.random() * -15}s`, // randomized negative delay
+      duration: `${Math.random() * 8 + 6}s`, // 6s to 14s
+      rotate: `${Math.random() * 360}deg`
+    }));
+  }, []);
+
+  const handleOpenGate = () => {
+    if (openingState !== 'ready') return;
+    setOpeningState('animating');
+    if (audioRef.current) {
+      audioRef.current.play().then(() => {
+        setIsPlaying(true);
+      }).catch((err) => {
+        console.log("Audio autoplay blocked by browser policy, fallback to manual start", err);
+      });
+    }
+    setTimeout(() => {
+      setOpeningState('ended');
+    }, 3000);
+  };
 
   // Google Sheet Webhook endpoint
   const [sheetUrl, setSheetUrl] = useState(() => {
@@ -1009,6 +1042,23 @@ function App() {
 
       {/* 1. Cover / Header */}
       <section className="cover-section animate-fade-in">
+        {/* Cherry Blossom falling effect */}
+        <div className="cherry-blossom-container">
+          {cherryPetals.map((petal) => (
+            <div
+              key={petal.id}
+              className="petal"
+              style={{
+                left: petal.left,
+                width: petal.size,
+                height: petal.size,
+                animationDelay: petal.delay,
+                animationDuration: petal.duration,
+                transform: `rotate(${petal.rotate})`
+              }}
+            />
+          ))}
+        </div>
         <div className="cover-image-container">
           <div className="image-edit-wrapper">
             <img
@@ -2822,6 +2872,26 @@ function doGet(e) {
             >
               텍스트 복사하기
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Opening Gate Screen Overlay */}
+      {openingState !== 'ended' && (
+        <div className={`opening-gate ${openingState === 'animating' ? 'opened' : ''}`} onClick={handleOpenGate}>
+          <div className="gate-half gate-left">
+            <div className="forest-bg left-bg" />
+          </div>
+          <div className="gate-half gate-right">
+            <div className="forest-bg right-bg" />
+          </div>
+          <div className="gate-content">
+            <div className="wooden-sign">
+              <div className="sign-board">
+                <span className="sign-text">결혼식으로 입장</span>
+              </div>
+              <div className="sign-post" />
+            </div>
           </div>
         </div>
       )}

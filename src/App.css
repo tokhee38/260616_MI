@@ -1482,3 +1482,191 @@
   transform: translateY(0);
 }
 
+/* Cherry Blossom Falling Effect */
+.cherry-blossom-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.petal {
+  position: absolute;
+  background: linear-gradient(135deg, #ffccd5, #ffb3c1);
+  border-radius: 15px 0 15px 15px;
+  opacity: 0.8;
+  pointer-events: none;
+  animation: fall-and-sway linear infinite;
+  transform-origin: center;
+}
+
+@keyframes fall-and-sway {
+  0% {
+    top: -20px;
+    transform: translateX(0) rotate(0deg) scale(0.8);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    top: 105%;
+    transform: translateX(80px) rotate(540deg) scale(0.6);
+    opacity: 0;
+  }
+}
+
+/* Opening Gate Animation */
+.opening-gate {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 3000;
+  display: flex;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #000;
+}
+
+.gate-half {
+  position: absolute;
+  top: 0;
+  width: 50.5vw;
+  height: 100vh;
+  overflow: hidden;
+  transition: transform 3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.gate-left {
+  left: 0;
+}
+
+.gate-right {
+  right: 0;
+}
+
+.opening-gate.opened .gate-left {
+  transform: translateX(-100%);
+}
+
+.opening-gate.opened .gate-right {
+  transform: translateX(100%);
+}
+
+.forest-bg {
+  position: absolute;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-image: url('./assets/forest_bg.png');
+}
+
+.left-bg {
+  left: 0;
+}
+
+.right-bg {
+  right: -50vw;
+}
+
+.gate-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  z-index: 3010;
+  transition: opacity 1s ease-out;
+}
+
+.opening-gate.opened .gate-content {
+  opacity: 0;
+}
+
+/* Wooden Sign Styling */
+.wooden-sign {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: gentle-float 4s ease-in-out infinite;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+}
+
+.sign-board {
+  background: linear-gradient(135deg, #704214, #5c3317);
+  border: 4px solid #3d2212;
+  border-radius: 12px;
+  padding: 20px 40px;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 240px;
+}
+
+.sign-board::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  right: 10px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+.sign-text {
+  font-family: 'Nanum Pen Script', cursive;
+  font-size: 36px;
+  color: #fff8e7;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  letter-spacing: 2px;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.sign-post {
+  width: 24px;
+  height: 120px;
+  background: linear-gradient(90deg, #4e2912, #3d2212);
+  border-left: 2px solid #5c3317;
+  box-shadow: 5px 0 10px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes gentle-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.85;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(255, 248, 231, 0.6), 2px 2px 8px rgba(0, 0, 0, 0.9);
+  }
+}
+
+
