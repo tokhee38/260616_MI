@@ -64,6 +64,8 @@ function App() {
   // Audio Player State
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
+  const touchStartRef = useRef(0);
+  const touchEndRef = useRef(0);
 
   // Google Sheet Webhook endpoint
   const [sheetUrl, setSheetUrl] = useState(() => {
@@ -236,6 +238,30 @@ function App() {
       }
     }
   }, [config.bgmUrl]);
+
+  // Scroll Reveal Intersection Observer
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -100px 0px',
+      threshold: 0.05
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, observerOptions);
+
+    const elements = document.querySelectorAll('.scroll-reveal');
+    elements.forEach((el) => observer.observe(el));
+
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
 
   // Dynamic D-Day Timer Effect
   useEffect(() => {
@@ -921,6 +947,33 @@ function App() {
     }));
   };
 
+  const handleTouchStart = (e) => {
+    touchStartRef.current = e.touches[0].clientX;
+    touchEndRef.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndRef.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    const startX = touchStartRef.current;
+    const endX = touchEndRef.current;
+    const diffX = startX - endX;
+
+    if (diffX > 50) {
+      setLightbox(prev => ({
+        ...prev,
+        index: (prev.index + 1) % galleryImages.length
+      }));
+    } else if (diffX < -50) {
+      setLightbox(prev => ({
+        ...prev,
+        index: (prev.index - 1 + galleryImages.length) % galleryImages.length
+      }));
+    }
+  };
+
   return (
     <div className={isEditMode ? 'edit-active' : ''}>
       {/* Background Audio */}
@@ -1019,7 +1072,7 @@ function App() {
       </section>
 
       {/* 2. Greeting Section */}
-      <section className="greeting-section">
+      <section className="greeting-section scroll-reveal">
         <h2 className="section-title">
           <span className="editable-area">{renderEditableText('greeting', 'title')}</span>
         </h2>
@@ -1219,7 +1272,7 @@ function App() {
 
 
       {/* 4. Wedding Calendar & Countdown */}
-      <section className="calendar-section">
+      <section className="calendar-section scroll-reveal">
         <h2 className="section-title">소중한 결혼식 날</h2>
         <p className="section-subtitle">Date & Time</p>
 
@@ -1289,7 +1342,7 @@ function App() {
       </section>
 
       {/* 5. Gallery Section */}
-      <section className="gallery-section">
+      <section className="gallery-section scroll-reveal">
         <h2 className="section-title">갤러리</h2>
         <p className="section-subtitle">Our Wedding Gallery</p>
 
@@ -1386,7 +1439,7 @@ function App() {
       </section>
 
       {/* 5.5. Information Section (공지사항) */}
-      <section className="information-section">
+      <section className="information-section scroll-reveal">
         <p className="information-subtitle-en">INFORMATION</p>
         <h2 className="section-title">공지사항</h2>
 
@@ -1438,22 +1491,42 @@ function App() {
                 </div>
                 <div className="info-pane-text-content">
                   <div className="info-content-group">
-                    <h4 className="info-group-title">💍 예식</h4>
-                    <p className="info-group-text">예식은 11시 30분부터 1시 30분까지<br />1부와 2부로 나누어 진행됩니다.</p>
-                    <p className="info-group-text highlight">하객 여러분들께서는 마지막까지<br />자리를 함께해 주시면 감사하겠습니다.</p>
+                    <h4 className="info-group-title">
+                      <span className="editable-area">{renderEditableText('notice', 'wedding_title1')}</span>
+                    </h4>
+                    <p className="info-group-text">
+                      <span className="editable-area">{renderEditableText('notice', 'wedding_text1_1', true)}</span>
+                    </p>
+                    <p className="info-group-text highlight">
+                      <span className="editable-area">{renderEditableText('notice', 'wedding_text1_2', true)}</span>
+                    </p>
                   </div>
                   <div className="info-content-group">
-                    <h4 className="info-group-title">💌 화환</h4>
-                    <p className="info-group-text">예식장이 협소하여 화환 반입이 불가합니다.<br />생각해 주시는 마음만 감사히 받겠습니다.</p>
+                    <h4 className="info-group-title">
+                      <span className="editable-area">{renderEditableText('notice', 'wedding_title2')}</span>
+                    </h4>
+                    <p className="info-group-text">
+                      <span className="editable-area">{renderEditableText('notice', 'wedding_text2', true)}</span>
+                    </p>
                   </div>
                   <div className="info-content-group">
-                    <h4 className="info-group-title">🏪 ATM(현금인출기)</h4>
-                    <p className="info-group-text">예식장 내 ATM이 없습니다.<br />도보 3분 거리 GS25편의점 이용 부탁드립니다.</p>
+                    <h4 className="info-group-title">
+                      <span className="editable-area">{renderEditableText('notice', 'wedding_title3')}</span>
+                    </h4>
+                    <p className="info-group-text">
+                      <span className="editable-area">{renderEditableText('notice', 'wedding_text3', true)}</span>
+                    </p>
                   </div>
                   <div className="info-content-group">
-                    <h4 className="info-group-title">💐 꽃다발 증정</h4>
-                    <p className="info-group-text">예식 후 사용된 꽃은 포장되어<br />꽃다발로 선착순 증정 예정입니다.</p>
-                    <p className="info-group-text highlight">선착순 수량 소진 시, 무대 위 놓여진 꽃을<br />자유롭게 담아가시길 바랍니다.</p>
+                    <h4 className="info-group-title">
+                      <span className="editable-area">{renderEditableText('notice', 'wedding_title4')}</span>
+                    </h4>
+                    <p className="info-group-text">
+                      <span className="editable-area">{renderEditableText('notice', 'wedding_text4_1', true)}</span>
+                    </p>
+                    <p className="info-group-text highlight">
+                      <span className="editable-area">{renderEditableText('notice', 'wedding_text4_2', true)}</span>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1484,15 +1557,29 @@ function App() {
                 </div>
                 <div className="info-pane-text-content">
                   <div className="info-content-group">
-                    <h4 className="info-group-title">🍴 식사시간</h4>
-                    <p className="info-group-text"><strong>1층</strong> - 1부 예식 이후 식사가 가능합니다.</p>
-                    <p className="info-group-text"><strong>2층</strong> - 예식 전, 11시부터 식사가 가능합니다.</p>
-                    <p className="info-group-text highlight" style={{ marginTop: '12px' }}>※ 예식장 입장 시,<br />식사유무와 관계없이 식권 제출이 필요합니다.</p>
-                    <p className="info-group-text" style={{ marginTop: '8px' }}>식사를 하지 않으시는 하객분들께서는<br />귀가 시 직원에게 식권을 회수하여<br />축의대에 반납 부탁드립니다.</p>
+                    <h4 className="info-group-title">
+                      <span className="editable-area">{renderEditableText('notice', 'meal_title1')}</span>
+                    </h4>
+                    <p className="info-group-text">
+                      <span className="editable-area">{renderEditableText('notice', 'meal_text1_1', true)}</span>
+                    </p>
+                    <p className="info-group-text">
+                      <span className="editable-area">{renderEditableText('notice', 'meal_text1_2', true)}</span>
+                    </p>
+                    <p className="info-group-text highlight" style={{ marginTop: '12px' }}>
+                      <span className="editable-area">{renderEditableText('notice', 'meal_text1_3', true)}</span>
+                    </p>
+                    <p className="info-group-text" style={{ marginTop: '8px' }}>
+                      <span className="editable-area">{renderEditableText('notice', 'meal_text1_4', true)}</span>
+                    </p>
                   </div>
                   <div className="info-content-group">
-                    <h4 className="info-group-title">🍰 식전다과</h4>
-                    <p className="info-group-text">뷔페 공간 내 하객 여러분들을 위한<br />웰컴 드링크와 다과가 준비되어 있습니다.</p>
+                    <h4 className="info-group-title">
+                      <span className="editable-area">{renderEditableText('notice', 'meal_title2')}</span>
+                    </h4>
+                    <p className="info-group-text">
+                      <span className="editable-area">{renderEditableText('notice', 'meal_text2', true)}</span>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1522,9 +1609,15 @@ function App() {
                   )}
                 </div>
                 <div className="info-pane-text-content" style={{ padding: '16px 8px' }}>
-                  <p className="info-group-text highlight" style={{ fontSize: '15px', marginBottom: '12px' }}>햇살이 들어오는<br />싱그럽고 화사한 홀입니다.</p>
-                  <p className="info-group-text" style={{ fontSize: '14px', marginBottom: '16px' }}>밝은색의 옷이 잘 어울리는 곳이니<br />편하게 자리해 주시기 바랍니다.</p>
-                  <p className="info-group-text highlight-note" style={{ fontSize: '13px', color: 'var(--text-light)', borderTop: '1px dashed var(--border)', paddingTop: '12px', marginTop: '12px' }}>※ 베이지색, 파스텔톤 등<br />자유롭게 착용해 주셔도 됩니다.</p>
+                  <p className="info-group-text highlight" style={{ fontSize: '15px', marginBottom: '12px' }}>
+                    <span className="editable-area">{renderEditableText('notice', 'dress_text1', true)}</span>
+                  </p>
+                  <p className="info-group-text" style={{ fontSize: '14px', marginBottom: '16px' }}>
+                    <span className="editable-area">{renderEditableText('notice', 'dress_text2', true)}</span>
+                  </p>
+                  <p className="info-group-text highlight-note" style={{ fontSize: '13px', color: 'var(--text-light)', borderTop: '1px dashed var(--border)', paddingTop: '12px', marginTop: '12px' }}>
+                    <span className="editable-area">{renderEditableText('notice', 'dress_text3', true)}</span>
+                  </p>
                 </div>
               </div>
             )}
@@ -1533,7 +1626,7 @@ function App() {
       </section>
 
       {/* 6. Location Section */}
-      <section className="location-section">
+      <section className="location-section scroll-reveal">
         <h2 className="section-title">오시는 길</h2>
         <p className="section-subtitle">Map & Location</p>
 
@@ -1695,7 +1788,7 @@ function App() {
       </section>
 
       {/* 7. RSVP Button Card */}
-      <section className="rsvp-section" style={{ backgroundColor: 'var(--primary-light)' }}>
+      <section className="rsvp-section scroll-reveal" style={{ backgroundColor: 'var(--primary-light)' }}>
         <h2 className="section-title">참석 의사 전달하기</h2>
         <p className="section-subtitle" style={{ color: 'var(--primary-dark)' }}>RSVP</p>
 
@@ -1714,7 +1807,7 @@ function App() {
       </section>
 
       {/* 8. Guestbook Section */}
-      <section className="guestbook-section">
+      <section className="guestbook-section scroll-reveal">
         <h2 className="section-title">방명록</h2>
         <p className="section-subtitle">Guestbook</p>
 
@@ -1791,7 +1884,7 @@ function App() {
       </section>
 
       {/* 9. Gift / Accounts Section */}
-      <section className="gift-section">
+      <section className="gift-section scroll-reveal">
         <h2 className="section-title">마음 전하실 곳</h2>
         <p className="section-subtitle">Gift accounts</p>
 
@@ -2421,7 +2514,13 @@ function App() {
           className="lightbox-overlay"
           onClick={() => setLightbox({ isOpen: false, index: 0 })}
         >
-          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="lightbox-content"
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             <button
               type="button"
               className="lightbox-close"

@@ -771,7 +771,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
+  background: #000000;
   z-index: 2000;
   display: flex;
   flex-direction: column;
@@ -810,9 +810,9 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
   border: none;
-  color: white;
+  color: rgba(255, 255, 255, 0.6);
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -821,11 +821,12 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 
 .lightbox-nav:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
 }
 
 .lightbox-prev {
@@ -1467,3 +1468,17 @@
 .edit-control-btn-server:hover {
   background-color: #00cec9;
 }
+
+/* Scroll Reveal Animation */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1.5s ease, transform 1.5s ease;
+  will-change: opacity, transform;
+}
+
+.scroll-reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+

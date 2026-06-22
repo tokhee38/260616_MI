@@ -93,5 +93,27 @@
       "gallery_43"
     ]
   },
-  "bgmUrl": "https://motionarray.com/royalty-free-music/we-are-like-a-family-1174565/"
+  "bgmUrl": "https://motionarray.com/royalty-free-music/we-are-like-a-family-1174565/",
+  "notice": {
+    "wedding_title1": "💍 예식",
+    "wedding_text1_1": "예식은 11시 30분부터 1시 30분까지\n1부와 2부로 나누어 진행됩니다.",
+    "wedding_text1_2": "하객 여러분들께서는 마지막까지\n자리를 함께해 주시면 감사하겠습니다.",
+    "wedding_title2": "💌 화환",
+    "wedding_text2": "예식장이 협소하여 화환 반입이 불가합니다.\n생각해 주시는 마음만 감사히 받겠습니다.",
+    "wedding_title3": "🏪 ATM(현금인출기)",
+    "wedding_text3": "예식장 내 ATM이 없습니다.\n도보 3분 거리 GS25편의점 이용 부탁드립니다.",
+    "wedding_title4": "💐 꽃다발 증정",
+    "wedding_text4_1": "예식 후 사용된 꽃은 포장되어\n꽃다발로 선착순 증정 예정입니다.",
+    "wedding_text4_2": "선착순 수량 소진 시, 무대 위 놓여진 꽃을\n자유롭게 담아가시길 바랍니다.",
+    "meal_title1": "🍴 식사시간",
+    "meal_text1_1": "1층 - 1부 예식 이후 식사가 가능합니다.",
+    "meal_text1_2": "2층 - 예식 전, 11시부터 식사가 가능합니다.",
+    "meal_text1_3": "※ 예식장 입장 시,\n식사유무와 관계없이 식권 제출이 필요합니다.",
+    "meal_text1_4": "식사를 하지 않으시는 하객분들께서는\n귀가 시 직원에게 식권을 회수하여\n축의대에 반납 부탁드립니다.",
+    "meal_title2": "🍰 식전다과",
+    "meal_text2": "뷔페 공간 내 하객 여러분들을 위한\n웰컴 드링크와 다과가 준비되어 있습니다.",
+    "dress_text1": "햇살이 들어오는\n싱그럽고 화사한 홀입니다.",
+    "dress_text2": "밝은색의 옷이 잘 어울리는 곳이니\n편하게 자리해 주시기 바랍니다.",
+    "dress_text3": "※ 베이지색, 파스텔톤 등\n자유롭게 착용해 주셔도 됩니다."
+  }
 }
