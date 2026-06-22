@@ -2879,19 +2879,39 @@ function doGet(e) {
       {/* Opening Gate Screen Overlay */}
       {openingState !== 'ended' && (
         <div className={`opening-gate ${openingState === 'animating' ? 'opened' : ''}`} onClick={handleOpenGate}>
-          <div className="gate-half gate-left">
-            <div className="forest-bg left-bg" />
-          </div>
-          <div className="gate-half gate-right">
-            <div className="forest-bg right-bg" />
-          </div>
-          <div className="gate-content">
-            <div className="wooden-sign">
-              <div className="sign-board">
-                <span className="sign-text">결혼식으로 입장</span>
-              </div>
-              <div className="sign-post" />
+          {/* Layer 1: Background Trees */}
+          <div className="gate-layer layer-1">
+            <div className="gate-half gate-left">
+              <div className="forest-bg bg-layer-1" />
             </div>
+            <div className="gate-half gate-right">
+              <div className="forest-bg bg-layer-1" />
+            </div>
+          </div>
+
+          {/* Layer 2: Midground Branches/Leaves */}
+          <div className="gate-layer layer-2">
+            <div className="gate-half gate-left">
+              <div className="forest-bg bg-layer-2" />
+            </div>
+            <div className="gate-half gate-right">
+              <div className="forest-bg bg-layer-2" />
+            </div>
+          </div>
+
+          {/* Layer 3: Foreground Flowers/Vines */}
+          <div className="gate-layer layer-3">
+            <div className="gate-half gate-left">
+              <div className="forest-bg bg-layer-3" />
+            </div>
+            <div className="gate-half gate-right">
+              <div className="forest-bg bg-layer-3" />
+            </div>
+          </div>
+
+          {/* Cursive Entrance Text */}
+          <div className="gate-content">
+            <span className="sign-text-plain">입장</span>
           </div>
         </div>
       )}
