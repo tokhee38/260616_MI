@@ -39,10 +39,13 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Cover Section */
 .cover-section {
   padding: 0 0 40px 0 !important;
-  background-color: var(--bg-card);
+  background-color: var(--bg-page);
+}
+
+.cover-section::after {
+  display: none !important;
 }
 
 .cover-image-container {
@@ -142,11 +145,11 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 24px;
+  padding: 22px 28px;
   background-color: var(--primary-light);
   border-radius: 20px;
   font-size: 14px;
-  margin-bottom: 24px;
+  margin: 0 16px 24px 16px;
 }
 
 .parents-row {
@@ -746,6 +749,12 @@
   transform: scale(1.02);
 }
 
+.gallery-item-faded {
+  opacity: 0.55;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.25) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.25) 100%);
+}
+
 .gallery-img {
   width: 100%;
   height: 100%;
@@ -1167,6 +1176,26 @@
   border-color: var(--primary);
   color: var(--primary-dark);
   background-color: var(--primary-light);
+}
+
+.account-delete-btn {
+  background: white;
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #e06d81;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+  margin-left: 6px;
+}
+
+.account-delete-btn:hover {
+  border-color: #ff738c;
+  color: white;
+  background-color: #ff738c;
 }
 
 /* Footer & Guide button */

@@ -901,8 +901,8 @@ function App() {
     };
   });
 
-  // Gallery view limits (6 elements default)
-  const visibleImages = isGalleryExpanded ? galleryImages : galleryImages.slice(0, 6);
+  // Gallery view limits (9 elements default when collapsed, fading out the 3rd row)
+  const visibleImages = isGalleryExpanded ? galleryImages : galleryImages.slice(0, 9);
 
   // Lightbox handlers (endless looping support)
   const handlePrev = (e) => {
@@ -1331,7 +1331,7 @@ function App() {
             {visibleImages.map((img, idx) => (
               <div
                 key={idx}
-                className="gallery-item"
+                className={`gallery-item ${!isGalleryExpanded && idx >= 6 ? 'gallery-item-faded' : ''}`}
                 draggable={isEditMode}
                 onDragStart={(e) => handleDragStart(idx, e)}
                 onDragOver={(e) => handleDragOver(idx, e)}
@@ -1810,73 +1810,127 @@ function App() {
             {activeAccordion === 'groom' && (
               <div className="accordion-content">
                 {/* Groom */}
-                <div className="account-card">
-                  <div className="account-row-top">
-                    <span className="account-holder">
-                      <span className="editable-area">{renderEditableText('groom', 'name')}</span>
-                      <span className="relation">신랑</span>
-                    </span>
+                {(isEditMode || (config.groom.bankName && config.groom.bankAccount)) && (
+                  <div className="account-card">
+                    <div className="account-row-top">
+                      <span className="account-holder">
+                        <span className="editable-area">{renderEditableText('groom', 'name')}</span>
+                        <span className="relation">신랑</span>
+                      </span>
+                    </div>
+                    <div className="account-num-row">
+                      <span className="account-number">
+                        <span className="editable-area">{renderEditableText('groom', 'bankName')}</span>{' '}
+                        <span className="editable-area">{renderEditableText('groom', 'bankAccount')}</span>
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <button
+                          type="button"
+                          className="account-copy-btn"
+                          onClick={() => copyText(`${config.groom.bankName} ${config.groom.bankAccount}`)}
+                        >
+                          복사
+                        </button>
+                        {isEditMode && (
+                          <button
+                            type="button"
+                            className="account-delete-btn"
+                            onClick={() => {
+                              if (window.confirm('신랑 계좌 정보를 삭제하시겠습니까?')) {
+                                updateField('groom', 'bankName', '');
+                                updateField('groom', 'bankAccount', '');
+                              }
+                            }}
+                          >
+                            삭제
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div className="account-num-row">
-                    <span className="account-number">
-                      <span className="editable-area">{renderEditableText('groom', 'bankName')}</span>{' '}
-                      <span className="editable-area">{renderEditableText('groom', 'bankAccount')}</span>
-                    </span>
-                    <button
-                      type="button"
-                      className="account-copy-btn"
-                      onClick={() => copyText(`${config.groom.bankName} ${config.groom.bankAccount}`)}
-                    >
-                      복사
-                    </button>
-                  </div>
-                </div>
+                )}
 
                 {/* Groom Father */}
-                <div className="account-card">
-                  <div className="account-row-top">
-                    <span className="account-holder">
-                      <span className="editable-area">{renderEditableText('groom', 'fatherName')}</span>
-                      <span className="relation">신랑 아버지</span>
-                    </span>
+                {(isEditMode || (config.groom.fatherBankName && config.groom.fatherBankAccount)) && (
+                  <div className="account-card">
+                    <div className="account-row-top">
+                      <span className="account-holder">
+                        <span className="editable-area">{renderEditableText('groom', 'fatherName')}</span>
+                        <span className="relation">신랑 아버지</span>
+                      </span>
+                    </div>
+                    <div className="account-num-row">
+                      <span className="account-number">
+                        <span className="editable-area">{renderEditableText('groom', 'fatherBankName')}</span>{' '}
+                        <span className="editable-area">{renderEditableText('groom', 'fatherBankAccount')}</span>
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <button
+                          type="button"
+                          className="account-copy-btn"
+                          onClick={() => copyText(`${config.groom.fatherBankName} ${config.groom.fatherBankAccount}`)}
+                        >
+                          복사
+                        </button>
+                        {isEditMode && (
+                          <button
+                            type="button"
+                            className="account-delete-btn"
+                            onClick={() => {
+                              if (window.confirm('신랑 아버지 계좌 정보를 삭제하시겠습니까?')) {
+                                updateField('groom', 'fatherBankName', '');
+                                updateField('groom', 'fatherBankAccount', '');
+                              }
+                            }}
+                          >
+                            삭제
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div className="account-num-row">
-                    <span className="account-number">
-                      <span className="editable-area">{renderEditableText('groom', 'fatherBankName')}</span>{' '}
-                      <span className="editable-area">{renderEditableText('groom', 'fatherBankAccount')}</span>
-                    </span>
-                    <button
-                      type="button"
-                      className="account-copy-btn"
-                      onClick={() => copyText(`${config.groom.fatherBankName} ${config.groom.fatherBankAccount}`)}
-                    >
-                      복사
-                    </button>
-                  </div>
-                </div>
+                )}
 
                 {/* Groom Mother */}
-                <div className="account-card">
-                  <div className="account-row-top">
-                    <span className="account-holder">
-                      <span className="editable-area">{renderEditableText('groom', 'motherName')}</span>
-                      <span className="relation">신랑 어머니</span>
-                    </span>
+                {(isEditMode || (config.groom.motherBankName && config.groom.motherBankAccount)) && (
+                  <div className="account-card">
+                    <div className="account-row-top">
+                      <span className="account-holder">
+                        <span className="editable-area">{renderEditableText('groom', 'motherName')}</span>
+                        <span className="relation">신랑 어머니</span>
+                      </span>
+                    </div>
+                    <div className="account-num-row">
+                      <span className="account-number">
+                        <span className="editable-area">{renderEditableText('groom', 'motherBankName')}</span>{' '}
+                        <span className="editable-area">{renderEditableText('groom', 'motherBankAccount')}</span>
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <button
+                          type="button"
+                          className="account-copy-btn"
+                          onClick={() => copyText(`${config.groom.motherBankName} ${config.groom.motherBankAccount}`)}
+                        >
+                          복사
+                        </button>
+                        {isEditMode && (
+                          <button
+                            type="button"
+                            className="account-delete-btn"
+                            onClick={() => {
+                              if (window.confirm('신랑 어머니 계좌 정보를 삭제하시겠습니까?')) {
+                                updateField('groom', 'motherBankName', '');
+                                updateField('groom', 'motherBankAccount', '');
+                              }
+                            }}
+                          >
+                            삭제
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div className="account-num-row">
-                    <span className="account-number">
-                      <span className="editable-area">{renderEditableText('groom', 'motherBankName')}</span>{' '}
-                      <span className="editable-area">{renderEditableText('groom', 'motherBankAccount')}</span>
-                    </span>
-                    <button
-                      type="button"
-                      className="account-copy-btn"
-                      onClick={() => copyText(`${config.groom.motherBankName} ${config.groom.motherBankAccount}`)}
-                    >
-                      복사
-                    </button>
-                  </div>
-                </div>
+                )}
               </div>
             )}
           </div>
@@ -1890,73 +1944,127 @@ function App() {
             {activeAccordion === 'bride' && (
               <div className="accordion-content">
                 {/* Bride */}
-                <div className="account-card">
-                  <div className="account-row-top">
-                    <span className="account-holder">
-                      <span className="editable-area">{renderEditableText('bride', 'name')}</span>
-                      <span className="relation">신부</span>
-                    </span>
+                {(isEditMode || (config.bride.bankName && config.bride.bankAccount)) && (
+                  <div className="account-card">
+                    <div className="account-row-top">
+                      <span className="account-holder">
+                        <span className="editable-area">{renderEditableText('bride', 'name')}</span>
+                        <span className="relation">신부</span>
+                      </span>
+                    </div>
+                    <div className="account-num-row">
+                      <span className="account-number">
+                        <span className="editable-area">{renderEditableText('bride', 'bankName')}</span>{' '}
+                        <span className="editable-area">{renderEditableText('bride', 'bankAccount')}</span>
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <button
+                          type="button"
+                          className="account-copy-btn"
+                          onClick={() => copyText(`${config.bride.bankName} ${config.bride.bankAccount}`)}
+                        >
+                          복사
+                        </button>
+                        {isEditMode && (
+                          <button
+                            type="button"
+                            className="account-delete-btn"
+                            onClick={() => {
+                              if (window.confirm('신부 계좌 정보를 삭제하시겠습니까?')) {
+                                updateField('bride', 'bankName', '');
+                                updateField('bride', 'bankAccount', '');
+                              }
+                            }}
+                          >
+                            삭제
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div className="account-num-row">
-                    <span className="account-number">
-                      <span className="editable-area">{renderEditableText('bride', 'bankName')}</span>{' '}
-                      <span className="editable-area">{renderEditableText('bride', 'bankAccount')}</span>
-                    </span>
-                    <button
-                      type="button"
-                      className="account-copy-btn"
-                      onClick={() => copyText(`${config.bride.bankName} ${config.bride.bankAccount}`)}
-                    >
-                      복사
-                    </button>
-                  </div>
-                </div>
+                )}
 
                 {/* Bride Father */}
-                <div className="account-card">
-                  <div className="account-row-top">
-                    <span className="account-holder">
-                      <span className="editable-area">{renderEditableText('bride', 'fatherName')}</span>
-                      <span className="relation">신부 아버지</span>
-                    </span>
+                {(isEditMode || (config.bride.fatherBankName && config.bride.fatherBankAccount)) && (
+                  <div className="account-card">
+                    <div className="account-row-top">
+                      <span className="account-holder">
+                        <span className="editable-area">{renderEditableText('bride', 'fatherName')}</span>
+                        <span className="relation">신부 아버지</span>
+                      </span>
+                    </div>
+                    <div className="account-num-row">
+                      <span className="account-number">
+                        <span className="editable-area">{renderEditableText('bride', 'fatherBankName')}</span>{' '}
+                        <span className="editable-area">{renderEditableText('bride', 'fatherBankAccount')}</span>
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <button
+                          type="button"
+                          className="account-copy-btn"
+                          onClick={() => copyText(`${config.bride.fatherBankName} ${config.bride.fatherBankAccount}`)}
+                        >
+                          복사
+                        </button>
+                        {isEditMode && (
+                          <button
+                            type="button"
+                            className="account-delete-btn"
+                            onClick={() => {
+                              if (window.confirm('신부 아버지 계좌 정보를 삭제하시겠습니까?')) {
+                                updateField('bride', 'fatherBankName', '');
+                                updateField('bride', 'fatherBankAccount', '');
+                              }
+                            }}
+                          >
+                            삭제
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div className="account-num-row">
-                    <span className="account-number">
-                      <span className="editable-area">{renderEditableText('bride', 'fatherBankName')}</span>{' '}
-                      <span className="editable-area">{renderEditableText('bride', 'fatherBankAccount')}</span>
-                    </span>
-                    <button
-                      type="button"
-                      className="account-copy-btn"
-                      onClick={() => copyText(`${config.bride.fatherBankName} ${config.bride.fatherBankAccount}`)}
-                    >
-                      복사
-                    </button>
-                  </div>
-                </div>
+                )}
 
                 {/* Bride Mother */}
-                <div className="account-card">
-                  <div className="account-row-top">
-                    <span className="account-holder">
-                      <span className="editable-area">{renderEditableText('bride', 'motherName')}</span>
-                      <span className="relation">신부 어머니</span>
-                    </span>
+                {(isEditMode || (config.bride.motherBankName && config.bride.motherBankAccount)) && (
+                  <div className="account-card">
+                    <div className="account-row-top">
+                      <span className="account-holder">
+                        <span className="editable-area">{renderEditableText('bride', 'motherName')}</span>
+                        <span className="relation">신부 어머니</span>
+                      </span>
+                    </div>
+                    <div className="account-num-row">
+                      <span className="account-number">
+                        <span className="editable-area">{renderEditableText('bride', 'motherBankName')}</span>{' '}
+                        <span className="editable-area">{renderEditableText('bride', 'motherBankAccount')}</span>
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <button
+                          type="button"
+                          className="account-copy-btn"
+                          onClick={() => copyText(`${config.bride.motherBankName} ${config.bride.motherBankAccount}`)}
+                        >
+                          복사
+                        </button>
+                        {isEditMode && (
+                          <button
+                            type="button"
+                            className="account-delete-btn"
+                            onClick={() => {
+                              if (window.confirm('신부 어머니 계좌 정보를 삭제하시겠습니까?')) {
+                                updateField('bride', 'motherBankName', '');
+                                updateField('bride', 'motherBankAccount', '');
+                              }
+                            }}
+                          >
+                            삭제
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div className="account-num-row">
-                    <span className="account-number">
-                      <span className="editable-area">{renderEditableText('bride', 'motherBankName')}</span>{' '}
-                      <span className="editable-area">{renderEditableText('bride', 'motherBankAccount')}</span>
-                    </span>
-                    <button
-                      type="button"
-                      className="account-copy-btn"
-                      onClick={() => copyText(`${config.bride.motherBankName} ${config.bride.motherBankAccount}`)}
-                    >
-                      복사
-                    </button>
-                  </div>
-                </div>
+                )}
               </div>
             )}
           </div>
