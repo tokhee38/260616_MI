@@ -67,12 +67,6 @@ function App() {
   const touchStartRef = useRef(0);
   const touchEndRef = useRef(0);
 
-  // Opening screen state
-  const [openingState, setOpeningState] = useState(() => {
-    const hasEditParam = window.location.search.includes('tkdahdwlfdl');
-    return hasEditParam ? 'ended' : 'ready';
-  });
-
   // Cherry Blossom particles generator
   const cherryPetals = useMemo(() => {
     return Array.from({ length: 20 }).map((_, idx) => ({
@@ -85,19 +79,53 @@ function App() {
     }));
   }, []);
 
-  const handleOpenGate = () => {
-    if (openingState !== 'ready') return;
-    setOpeningState('animating');
-    if (audioRef.current) {
-      audioRef.current.play().then(() => {
-        setIsPlaying(true);
-      }).catch((err) => {
-        console.log("Audio autoplay blocked by browser policy, fallback to manual start", err);
-      });
+  // Welcome RSVP Popup modal state
+  const [showWelcomeRsvp, setShowWelcomeRsvp] = useState(false);
+
+  useEffect(() => {
+    const hasEditParam = window.location.search.includes('tkdahdwlfdl');
+    if (hasEditParam) return;
+
+    const hideUntil = localStorage.getItem('hide_welcome_popup');
+    const now = new Date().getTime();
+    if (!hideUntil || now > parseInt(hideUntil)) {
+      setShowWelcomeRsvp(true);
     }
-    setTimeout(() => {
-      setOpeningState('ended');
-    }, 3000);
+  }, []);
+
+  const handleHideWelcomeToday = () => {
+    const expireTime = new Date().getTime() + 24 * 60 * 60 * 1000;
+    localStorage.setItem('hide_welcome_popup', String(expireTime));
+    setShowWelcomeRsvp(false);
+  };
+
+  const closeWelcomePopup = () => {
+    setShowWelcomeRsvp(false);
+  };
+
+  const handlePopupRsvpClick = () => {
+    setShowWelcomeRsvp(false);
+    setShowRsvpModal(true);
+  };
+
+  const formatPopupDate = (dateStr) => {
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return dateStr;
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
+      const dayOfWeek = weekDays[date.getDay()];
+      const hours = date.getHours();
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const ampm = hours >= 12 ? '오후' : '오전';
+      const displayHours = hours % 12 === 0 ? 12 : hours % 12;
+      const minStr = minutes === '00' ? '' : ` ${minutes}분`;
+      return `${year}.${month}.${day} (${dayOfWeek}) ${ampm} ${displayHours}시${minStr}`;
+    } catch (e) {
+      return dateStr;
+    }
   };
 
   // Google Sheet Webhook endpoint
@@ -1059,8 +1087,22 @@ function App() {
             />
           ))}
         </div>
-        <div className="cover-image-container">
-          <div className="image-edit-wrapper">
+        <div 
+          className="cover-image-container"
+          style={{
+            paddingLeft: `${(100 - (config.coverImageScale || 85)) / 2}%`,
+            paddingRight: `${(100 - (config.coverImageScale || 85)) / 2}%`,
+            paddingTop: '24px',
+            paddingBottom: '12px'
+          }}
+        >
+          <div className="image-edit-wrapper" style={{ position: 'relative' }}>
+            {/* Calligraphy Overlay Title (always maintained) */}
+            <div className="cover-invitation-title">
+              <div className="title-wedding">Wedding</div>
+              <div className="title-invitation">Invitation*</div>
+            </div>
+
             <img
               src={getImageSrc(config.images.mainBanner, defaultBanner)}
               className="cover-image"
@@ -1085,6 +1127,28 @@ function App() {
               </div>
             )}
           </div>
+          
+          {/* Edit Mode Cover Size Slider Control */}
+          {isEditMode && (
+            <div className="cover-size-controls" onClick={(e) => e.stopPropagation()}>
+              <span className="control-label">대문 사진 크기 조절:</span>
+              <input
+                type="range"
+                min="50"
+                max="100"
+                value={config.coverImageScale || 85}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value);
+                  setConfig(prev => ({
+                    ...prev,
+                    coverImageScale: val
+                  }));
+                }}
+                className="cover-size-slider"
+              />
+              <span className="control-val">{config.coverImageScale || 85}%</span>
+            </div>
+          )}
         </div>
 
         <div className="cover-info">
@@ -2876,42 +2940,85 @@ function doGet(e) {
         </div>
       )}
 
-      {/* Opening Gate Screen Overlay */}
-      {openingState !== 'ended' && (
-        <div className={`opening-gate ${openingState === 'animating' ? 'opened' : ''}`} onClick={handleOpenGate}>
-          {/* Layer 1: Background Trees */}
-          <div className="gate-layer layer-1">
-            <div className="gate-half gate-left">
-              <div className="forest-bg bg-layer-1" />
+      {/* Welcome RSVP Popup Modal */}
+      {showWelcomeRsvp && (
+        <div className="welcome-popup-overlay" onClick={closeWelcomePopup}>
+          <div className="welcome-popup-card" onClick={(e) => e.stopPropagation()}>
+            <button 
+              type="button" 
+              className="welcome-popup-close" 
+              onClick={closeWelcomePopup}
+            >
+              ×
+            </button>
+            <h3 className="welcome-popup-title">참석 의사 전달</h3>
+            
+            <div className="welcome-popup-icon-container">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                <polyline points="17 11 19 13 23 9" stroke="var(--primary)" stroke-width="2" />
+              </svg>
             </div>
-            <div className="gate-half gate-right">
-              <div className="forest-bg bg-layer-1" />
-            </div>
-          </div>
 
-          {/* Layer 2: Midground Branches/Leaves */}
-          <div className="gate-layer layer-2">
-            <div className="gate-half gate-left">
-              <div className="forest-bg bg-layer-2" />
-            </div>
-            <div className="gate-half gate-right">
-              <div className="forest-bg bg-layer-2" />
-            </div>
-          </div>
+            <p className="welcome-popup-description">
+              특별한 날 축하의 마음으로 참석해주시는 모든 분들을 한 분 한 분 더욱 귀하게 모실 수 있도록, 아래 버튼으로 신랑 & 신부에게 꼭 참석여부 전달을 부탁드립니다.
+            </p>
 
-          {/* Layer 3: Foreground Flowers/Vines */}
-          <div className="gate-layer layer-3">
-            <div className="gate-half gate-left">
-              <div className="forest-bg bg-layer-3" />
-            </div>
-            <div className="gate-half gate-right">
-              <div className="forest-bg bg-layer-3" />
-            </div>
-          </div>
+            <hr className="welcome-popup-divider" />
 
-          {/* Cursive Entrance Text */}
-          <div className="gate-content">
-            <span className="sign-text-plain">입장</span>
+            <div className="welcome-popup-details">
+              <div className="welcome-popup-detail-item">
+                <span className="welcome-popup-detail-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                </span>
+                <span>{formatPopupDate(config.weddingDate)}</span>
+              </div>
+              <div className="welcome-popup-detail-item">
+                <span className="welcome-popup-detail-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                  </svg>
+                </span>
+                <span>{config.location.hallName}</span>
+              </div>
+              <div className="welcome-popup-detail-item">
+                <span className="welcome-popup-detail-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                </span>
+                <span>{config.location.address}</span>
+              </div>
+            </div>
+
+            <hr className="welcome-popup-divider" />
+
+            <div className="welcome-popup-actions">
+              <button 
+                type="button" 
+                className="btn-today-hide" 
+                onClick={handleHideWelcomeToday}
+              >
+                오늘 하루 보지 않기
+              </button>
+              <button 
+                type="button" 
+                className="btn-popup-rsvp" 
+                onClick={handlePopupRsvpClick}
+              >
+                참석의사 전달하기
+              </button>
+            </div>
           </div>
         </div>
       )}

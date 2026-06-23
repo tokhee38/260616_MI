@@ -1523,142 +1523,205 @@
   }
 }
 
-/* Opening Gate Animation */
-.opening-gate {
-  position: absolute;
+/* Welcome RSVP Popup Modal */
+.welcome-popup-overlay {
+  position: absolute; /* lock to #root frame */
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  min-height: 100vh;
-  z-index: 3000;
-  display: flex;
-  overflow: hidden;
-  cursor: pointer;
-  background-color: #000;
-}
-
-.gate-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.layer-1 { z-index: 3001; }
-.layer-2 { z-index: 3002; }
-.layer-3 { z-index: 3003; }
-
-.gate-half {
-  position: absolute;
-  top: 0;
-  width: 50.5%;
-  height: 100%;
-  overflow: hidden;
-  will-change: transform;
-}
-
-.gate-left {
-  left: 0;
-}
-
-.gate-right {
   right: 0;
-}
-
-/* Layer sliding durations & delays */
-.layer-3 .gate-left { transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1) 0s; }
-.layer-3 .gate-right { transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1) 0s; }
-
-.layer-2 .gate-left { transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1) 0.5s; }
-.layer-2 .gate-right { transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1) 0.5s; }
-
-.layer-1 .gate-left { transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1) 1.0s; }
-.layer-1 .gate-right { transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1) 1.0s; }
-
-/* Slide out state */
-.opening-gate.opened .layer-3 .gate-left { transform: translateX(-100%); }
-.opening-gate.opened .layer-3 .gate-right { transform: translateX(100%); }
-
-.opening-gate.opened .layer-2 .gate-left { transform: translateX(-100%); }
-.opening-gate.opened .layer-2 .gate-right { transform: translateX(100%); }
-
-.opening-gate.opened .layer-1 .gate-left { transform: translateX(-100%); }
-.opening-gate.opened .layer-1 .gate-right { transform: translateX(100%); }
-
-/* Backgrounds */
-.forest-bg {
-  position: absolute;
-  top: 0;
-  width: 200%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.gate-left .forest-bg {
-  left: 0;
-}
-
-.gate-right .forest-bg {
-  right: -100%;
-}
-
-.bg-layer-1 {
-  background-image: url('./assets/forest_layer1.png');
-}
-
-.bg-layer-2 {
-  background-image: url('./assets/forest_layer2.png');
-  mix-blend-mode: multiply;
-}
-
-.bg-layer-3 {
-  background-image: url('./assets/forest_layer3.png');
-  mix-blend-mode: multiply;
-}
-
-.gate-content {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  bottom: 0;
+  background: rgba(78, 68, 73, 0.4);
+  z-index: 2500;
   display: flex;
   justify-content: center;
   align-items: center;
-  pointer-events: none;
-  z-index: 3010;
-  transition: opacity 0.5s ease-out;
+  padding: 16px;
 }
 
-.opening-gate.opened .gate-content {
-  opacity: 0;
+.welcome-popup-card {
+  background: #fdfbf9;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 20px;
+  padding: 32px 20px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(78, 68, 73, 0.15);
+  animation: popupScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-.sign-text-plain {
-  font-family: 'Nanum Pen Script', cursive;
-  font-size: 64px;
-  color: #ffffff;
-  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-  letter-spacing: 4px;
-  animation: gentle-glow-plain 2.5s ease-in-out infinite;
-}
-
-@keyframes gentle-glow-plain {
-  0%, 100% {
+@keyframes popupScaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
     transform: scale(1);
-    opacity: 0.9;
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-  }
-  50% {
-    transform: scale(1.04);
     opacity: 1;
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.4), 0 4px 15px rgba(0, 0, 0, 0.8);
   }
+}
+
+.welcome-popup-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #a79a9f;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.welcome-popup-close:hover {
+  color: #4e4449;
+}
+
+.welcome-popup-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #4e4449;
+  text-align: center;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.welcome-popup-icon-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.welcome-popup-description {
+  font-size: 13px;
+  color: #7c7277;
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  word-break: keep-all;
+  padding: 0 8px;
+}
+
+.welcome-popup-divider {
+  border: none;
+  border-top: 1px solid #eae2dd;
+  margin: 16px 0;
+}
+
+.welcome-popup-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 6px;
+}
+
+.welcome-popup-detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: #4e4449;
+  line-height: 1.4;
+}
+
+.welcome-popup-detail-icon {
+  flex-shrink: 0;
+  color: #4e4449;
+  margin-top: 1px;
+}
+
+.welcome-popup-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  padding: 0 4px;
+}
+
+.btn-today-hide {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: #8c8589;
+  cursor: pointer;
+  padding: 8px 8px;
+  border-radius: 6px;
+  text-decoration: underline;
+}
+
+.btn-popup-rsvp {
+  background: #ffffff;
+  border: 1px solid #8c8589;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #4e4449;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-popup-rsvp:hover {
+  background: #fdfbf7;
+  border-color: #4e4449;
+}
+
+/* Cursive Cover Title Overlay */
+.cover-invitation-title {
+  position: absolute;
+  top: -30px;
+  left: -20px;
+  right: -20px;
+  pointer-events: none;
+  z-index: 10;
+  font-family: 'Alex Brush', cursive;
+  line-height: 0.85;
+  color: #4e4449;
+  opacity: 0.8;
+}
+
+.title-wedding {
+  font-size: 76px;
+  text-align: left;
+}
+
+.title-invitation {
+  font-size: 76px;
+  text-align: right;
+  margin-top: -10px;
+}
+
+/* Edit Mode Cover Size Slider Control */
+.cover-size-controls {
+  margin-top: 8px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.control-label {
+  font-size: 11px;
+  color: var(--text-dark);
+  font-weight: bold;
+}
+
+.cover-size-slider {
+  width: 120px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.control-val {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--primary);
 }
 
 
