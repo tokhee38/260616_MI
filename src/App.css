@@ -603,57 +603,68 @@
 }
 
 /* Calendar Section */
-.calendar-card {
-  padding: 24px;
+.calendar-wrap {
+  padding: 16px 0;
+  margin-bottom: 24px;
 }
 
 .calendar-header {
-  font-size: 16px;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.calendar-date {
+  font-family: var(--serif);
+  font-size: 20px;
   font-weight: 700;
-  margin-bottom: 20px;
-  color: var(--text-dark);
+  color: #4D4C4C;
+  margin-bottom: 4px;
+}
+
+.calendar-time {
+  font-size: 13px;
+  color: var(--text-light);
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+  gap: 8px 0;
   text-align: center;
+  max-width: 320px;
+  margin: 0 auto;
 }
 
 .calendar-weekday {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-light);
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 500;
+  color: #4D4C4C;
+  padding-bottom: 12px;
 }
 
 .calendar-weekday:first-child {
-  color: #ff7675;
+  color: #F79E9E; /* soft pastel pink for Sunday */
 }
 
 .calendar-weekday:last-child {
-  color: #74b9ff;
+  color: #4D4C4C; /* dark gray for Saturday (no blue) */
 }
 
 .calendar-day {
   font-size: 13px;
-  height: 32px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  position: relative;
-  color: var(--text-dark);
+  color: #4D4C4C;
 }
 
 .calendar-day-sun {
-  color: #ff7675;
+  color: #F79E9E; /* soft pink Sunday */
 }
 
 .calendar-day-sat {
-  color: #74b9ff;
+  color: #4D4C4C; /* regular gray Saturday */
 }
 
 .calendar-day-empty {
@@ -661,72 +672,86 @@
 }
 
 .calendar-day-wedding {
-  background-color: var(--primary);
+  background-color: var(--primary); /* soft purple circle */
   color: white !important;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(255, 141, 161, 0.4);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  margin: 0 auto;
 }
 
-.calendar-heart-marker {
-  position: absolute;
-  font-size: 10px;
-  bottom: -4px;
-  color: var(--primary);
-}
-
-/* D-Day Counter */
+/* D-Day Counter (Benchmarked Style) */
 .dday-container {
-  margin-top: 24px;
-  padding: 16px;
-  background: var(--primary-light);
-  border-radius: 16px;
+  margin-top: 36px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 20px;
 }
 
-.dday-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--primary-dark);
-  margin-bottom: 12px;
-}
-
-.dday-grid {
+.countdown-timer {
   display: flex;
-  gap: 12px;
+  justify-content: center;
+  align-items: flex-end; /* aligns separators and values to their baselines */
+  gap: 16px;
+  font-family: "Crimson Pro", "Gowun Batang", Georgia, serif;
 }
 
-.dday-item {
-  background: white;
-  padding: 8px 12px;
-  border-radius: 12px;
-  min-width: 55px;
-  box-shadow: var(--shadow-sm);
+.countdown-item {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: 45px;
 }
 
-.dday-val {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-dark);
+.countdown-label {
+  font-size: 11px;
+  color: #999999;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
 }
 
-.dday-lbl {
-  font-size: 9px;
-  color: var(--text-light);
-  margin-top: 2px;
+.countdown-value {
+  font-size: 26px;
+  font-weight: 400;
+  color: #4D4C4C;
+  line-height: 1;
+}
+
+.countdown-separator {
+  font-size: 20px;
+  color: #4D4C4C;
+  line-height: 1;
+  padding-bottom: 2px; /* align vertically with values */
+  font-family: "Crimson Pro", sans-serif;
+}
+
+.countdown-text {
+  font-size: 15px;
+  color: #4D4C4C;
+  text-align: center;
+  margin-top: 8px;
+  font-family: var(--sans);
+  word-break: keep-all;
+}
+
+.countdown-highlight {
+  font-weight: bold;
+  color: #000000;
 }
 
 .dday-banner-text {
   font-size: 15px;
   font-weight: 700;
-  color: var(--primary-dark);
+  color: #4D4C4C;
   text-align: center;
   padding: 10px;
+  line-height: 1.6;
 }
+
 
 /* Gallery Section */
 .gallery-grid {
@@ -788,8 +813,6 @@
 .lightbox-img {
   width: 100%;
   height: auto;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   touch-action: none;
   -webkit-user-drag: none;
   user-select: none;
@@ -1187,16 +1210,16 @@
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
-  color: #e06d81;
+  color: var(--primary-dark);
   box-shadow: var(--shadow-sm);
   transition: all 0.2s;
   margin-left: 6px;
 }
 
 .account-delete-btn:hover {
-  border-color: #ff738c;
+  border-color: var(--primary-hover);
   color: white;
-  background-color: #ff738c;
+  background-color: var(--primary-hover);
 }
 
 /* Footer & Guide button */
@@ -1333,22 +1356,76 @@
 /* Floating Control Panel for Admin */
 .edit-control-bar {
   position: fixed;
-  bottom: 0;
+  bottom: 24px; /* raised from viewport bottom */
   left: 50%;
   transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
-  background: rgba(255, 255, 255, 0.95);
+  width: calc(100% - 32px); /* horizontal padding spacing */
+  max-width: 440px;
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(10px);
-  border-top: 3px solid var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: 20px;
   padding: 16px;
-  box-shadow: 0 -8px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 30px rgba(78, 68, 73, 0.25);
   z-index: 9999;
   display: flex;
   flex-direction: column;
   gap: 12px;
   animation: floatUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Floating Action Button (FAB) for Collapsed Trigger */
+.edit-collapsed-trigger {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none; /* let clicks pass through trigger background */
+}
+
+.edit-toggle-fab {
+  pointer-events: auto; /* capture click on the button itself */
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(255, 141, 161, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: pulseEditBtn 2.0s infinite;
+  transition: all 0.2s;
+}
+
+.edit-toggle-fab:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+@keyframes pulseEditBtn {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(255, 141, 161, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 4px 25px rgba(255, 141, 161, 0.6);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(255, 141, 161, 0.4);
+  }
+}
+
 
 .edit-control-header {
   display: flex;
@@ -1496,7 +1573,7 @@
 
 .petal {
   position: absolute;
-  background: linear-gradient(135deg, #ffccd5, #ffb3c1);
+  background: linear-gradient(135deg, #ebd9fc, #cfaffc);
   border-radius: 15px 0 15px 15px;
   opacity: 0.8;
   pointer-events: none;
@@ -1525,18 +1602,23 @@
 
 /* Welcome RSVP Popup Modal */
 .welcome-popup-overlay {
-  position: absolute; /* lock to #root frame */
+  position: fixed; /* viewport bound */
   top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  height: 100vh;
   background: rgba(78, 68, 73, 0.4);
   z-index: 2500;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 16px;
+  align-items: flex-start;
+  padding: 40px 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
+
 
 .welcome-popup-card {
   background: #fdfbf9;
@@ -1670,7 +1752,7 @@
 /* Cursive Cover Title Overlay */
 .cover-invitation-title {
   position: absolute;
-  top: -30px;
+  top: -10px; /* lowered slightly from -30px */
   left: -20px;
   right: -20px;
   pointer-events: none;
@@ -1678,7 +1760,10 @@
   font-family: 'Alex Brush', cursive;
   line-height: 0.85;
   color: #4e4449;
-  opacity: 0.8;
+  opacity: 0.9;
+  transform: rotate(-5deg); /* slant by 5 degrees */
+  transform-origin: center center;
+  text-shadow: 1px 1px 2px rgba(78, 68, 73, 0.15);
 }
 
 .title-wedding {

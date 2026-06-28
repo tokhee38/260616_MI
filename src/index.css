@@ -1,10 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Gowun+Batang:wght@700&family=Nanum+Pen+Script&family=Alex+Brush&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Gowun+Batang:wght@700&family=Nanum+Pen+Script&family=Alex+Brush&family=Crimson+Pro:wght@400;600&display=swap');
+
 
 :root {
-  --primary: #ff8da1;
-  --primary-hover: #ff738c;
-  --primary-light: #ffeef1;
-  --primary-dark: #e06d81;
+  --primary: #b59df7;
+  --primary-hover: #9d80f2;
+  --primary-light: #f3effd;
+  --primary-dark: #8e70e3;
   --bg-outer: #f4efea;
   --bg-page: #fdfbf7;
   --bg-card: #ffffff;

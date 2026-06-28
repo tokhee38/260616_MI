@@ -21,19 +21,26 @@ import noticeDressImg from './assets/notice_dress.png'
 const galleryModules = import.meta.glob('./assets/gallery_*.png', { eager: true });
 
 function App() {
-  // Load config from localStorage if exists, otherwise load defaultConfig
+  // Load config from localStorage if exists and in edit/local environment, otherwise load defaultConfig
   const [config, setConfig] = useState(() => {
-    const saved = localStorage.getItem('invitation_config');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return { ...defaultConfig, ...parsed };
-      } catch (e) {
-        console.error('Error parsing saved config:', e);
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const hasEditParam = window.location.search.includes('tkdahdwlfdl');
+    const isEditableEnv = isLocalhost || hasEditParam;
+
+    if (isEditableEnv) {
+      const saved = localStorage.getItem('invitation_config');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          return { ...defaultConfig, ...parsed };
+        } catch (e) {
+          console.error('Error parsing saved config:', e);
+        }
       }
     }
     return defaultConfig;
   });
+
 
   // Environment settings for Edit Mode
   const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -60,6 +67,8 @@ function App() {
 
   // Lightbox Gallery State
   const [lightbox, setLightbox] = useState({ isOpen: false, index: 0 });
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
 
   // Audio Player State
   const [isPlaying, setIsPlaying] = useState(false);
@@ -360,7 +369,7 @@ function App() {
       id: Date.now() + Math.random(),
       x,
       y,
-      emoji: ['❤️', '💖', '💕', '💗', '💌', '🌸'][Math.floor(Math.random() * 6)]
+      emoji: ['💜', '💟', '💕', '🌸', '💌', '🔮'][Math.floor(Math.random() * 6)]
     };
 
     setHearts((prev) => [...prev, newHeart]);
@@ -568,6 +577,13 @@ function App() {
 
   // ================= EDIT CONFIG HELPERS =================
   const updateField = (section, field, value) => {
+    if (!section) {
+      setConfig(prev => ({
+        ...prev,
+        [field]: value
+      }));
+      return;
+    }
     setConfig(prev => ({
       ...prev,
       [section]: {
@@ -893,6 +909,32 @@ function App() {
 
   const calendarData = getCalendarData(config.weddingDate);
 
+  const formatWeddingDetailDate = (dateStr) => {
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return { dateString: '', timeString: '' };
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1);
+      const day = String(date.getDate());
+      const weekDays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+      const dayOfWeek = weekDays[date.getDay()];
+      
+      let hours = date.getHours();
+      const minutes = date.getMinutes();
+      const ampm = hours >= 12 ? '오후' : '오전';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      
+      const timeString = `${dayOfWeek} ${ampm} ${hours}시` + (minutes > 0 ? ` ${minutes}분` : '');
+      return {
+        dateString: `${year}.${month.padStart(2, '0')}.${day.padStart(2, '0')}`,
+        timeString
+      };
+    } catch (e) {
+      return { dateString: dateStr, timeString: '' };
+    }
+  };
+
   // Formatting guestbook date string display safely for all browsers including Safari (iOS)
   const formatGuestbookDate = (timestamp) => {
     if (!timestamp) return '방금 전';
@@ -1010,29 +1052,32 @@ function App() {
 
   const handleTouchStart = (e) => {
     touchStartRef.current = e.touches[0].clientX;
-    touchEndRef.current = e.touches[0].clientX;
+    setIsDragging(true);
   };
 
   const handleTouchMove = (e) => {
-    touchEndRef.current = e.touches[0].clientX;
+    if (!isDragging) return;
+    const currentX = e.touches[0].clientX;
+    const diffX = currentX - touchStartRef.current;
+    setDragOffset(diffX);
   };
 
   const handleTouchEnd = () => {
-    const startX = touchStartRef.current;
-    const endX = touchEndRef.current;
-    const diffX = startX - endX;
+    if (!isDragging) return;
+    setIsDragging(false);
 
-    if (diffX > 50) {
+    if (dragOffset < -50) {
       setLightbox(prev => ({
         ...prev,
         index: (prev.index + 1) % galleryImages.length
       }));
-    } else if (diffX < -50) {
+    } else if (dragOffset > 50) {
       setLightbox(prev => ({
         ...prev,
         index: (prev.index - 1 + galleryImages.length) % galleryImages.length
       }));
     }
+    setDragOffset(0);
   };
 
   return (
@@ -1090,17 +1135,25 @@ function App() {
         <div 
           className="cover-image-container"
           style={{
-            paddingLeft: `${(100 - (config.coverImageScale || 85)) / 2}%`,
-            paddingRight: `${(100 - (config.coverImageScale || 85)) / 2}%`,
-            paddingTop: '24px',
-            paddingBottom: '12px'
+            paddingLeft: `${((100 - (config.coverImageScale || 85)) / 2) * 1.5}%`,
+            paddingRight: `${((100 - (config.coverImageScale || 85)) / 2) * 1.5}%`,
+            paddingTop: '36px',
+            paddingBottom: '18px'
           }}
         >
           <div className="image-edit-wrapper" style={{ position: 'relative' }}>
             {/* Calligraphy Overlay Title (always maintained) */}
-            <div className="cover-invitation-title">
-              <div className="title-wedding">Wedding</div>
-              <div className="title-invitation">Invitation*</div>
+            <div 
+              className="cover-invitation-title"
+              style={{
+                top: `${config.coverTitleTop !== undefined ? config.coverTitleTop : -10}px`,
+                left: `${config.coverTitleLeft !== undefined ? config.coverTitleLeft : -20}px`,
+                right: `${config.coverTitleLeft !== undefined ? config.coverTitleLeft : -20}px`,
+                color: config.coverTitleColor || '#4e4449'
+              }}
+            >
+              <div className="title-wedding" style={{ fontSize: `${config.coverTitleSize || 76}px` }}>Wedding</div>
+              <div className="title-invitation" style={{ fontSize: `${config.coverTitleSize || 76}px` }}>Invitation*</div>
             </div>
 
             <img
@@ -1128,25 +1181,103 @@ function App() {
             )}
           </div>
           
-          {/* Edit Mode Cover Size Slider Control */}
+          {/* Edit Mode Cover Control Panel */}
           {isEditMode && (
-            <div className="cover-size-controls" onClick={(e) => e.stopPropagation()}>
-              <span className="control-label">대문 사진 크기 조절:</span>
-              <input
-                type="range"
-                min="50"
-                max="100"
-                value={config.coverImageScale || 85}
-                onChange={(e) => {
-                  const val = parseInt(e.target.value);
-                  setConfig(prev => ({
-                    ...prev,
-                    coverImageScale: val
-                  }));
-                }}
-                className="cover-size-slider"
-              />
-              <span className="control-val">{config.coverImageScale || 85}%</span>
+            <div className="cover-edit-panel" onClick={(e) => e.stopPropagation()} style={{
+              marginTop: '12px',
+              padding: '12px',
+              background: 'rgba(255, 255, 255, 0.98)',
+              border: '1px solid var(--border)',
+              borderRadius: '8px',
+              boxShadow: 'var(--shadow-sm)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span className="control-label" style={{ fontSize: '11px', fontWeight: 'bold' }}>대문 사진 크기:</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '70%' }}>
+                  <input
+                    type="range"
+                    min="50"
+                    max="100"
+                    value={config.coverImageScale || 85}
+                    onChange={(e) => updateField(null, 'coverImageScale', parseInt(e.target.value))}
+                    style={{ flex: 1 }}
+                  />
+                  <span className="control-val" style={{ fontSize: '11px', minWidth: '35px', textAlign: 'right' }}>{config.coverImageScale || 85}%</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span className="control-label" style={{ fontSize: '11px', fontWeight: 'bold' }}>문구 글씨 크기:</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '70%' }}>
+                  <input
+                    type="range"
+                    min="40"
+                    max="120"
+                    value={config.coverTitleSize || 76}
+                    onChange={(e) => updateField(null, 'coverTitleSize', parseInt(e.target.value))}
+                    style={{ flex: 1 }}
+                  />
+                  <span className="control-val" style={{ fontSize: '11px', minWidth: '35px', textAlign: 'right' }}>{config.coverTitleSize || 76}px</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span className="control-label" style={{ fontSize: '11px', fontWeight: 'bold' }}>문구 상하 위치:</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '70%' }}>
+                  <input
+                    type="range"
+                    min="-80"
+                    max="150"
+                    value={config.coverTitleTop !== undefined ? config.coverTitleTop : -10}
+                    onChange={(e) => updateField(null, 'coverTitleTop', parseInt(e.target.value))}
+                    style={{ flex: 1 }}
+                  />
+                  <span className="control-val" style={{ fontSize: '11px', minWidth: '35px', textAlign: 'right' }}>{config.coverTitleTop !== undefined ? config.coverTitleTop : -10}px</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span className="control-label" style={{ fontSize: '11px', fontWeight: 'bold' }}>문구 좌우 위치:</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '70%' }}>
+                  <input
+                    type="range"
+                    min="-60"
+                    max="60"
+                    value={config.coverTitleLeft !== undefined ? config.coverTitleLeft : -20}
+                    onChange={(e) => updateField(null, 'coverTitleLeft', parseInt(e.target.value))}
+                    style={{ flex: 1 }}
+                  />
+                  <span className="control-val" style={{ fontSize: '11px', minWidth: '35px', textAlign: 'right' }}>{config.coverTitleLeft !== undefined ? config.coverTitleLeft : -20}px</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span className="control-label" style={{ fontSize: '11px', fontWeight: 'bold' }}>문구 글씨 색상:</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '70%' }}>
+                  <input
+                    type="color"
+                    value={config.coverTitleColor || '#4e4449'}
+                    onChange={(e) => updateField(null, 'coverTitleColor', e.target.value)}
+                    style={{ border: 'none', background: 'none', width: '40px', height: '24px', cursor: 'pointer', padding: 0 }}
+                  />
+                  <input
+                    type="text"
+                    value={config.coverTitleColor || '#4e4449'}
+                    onChange={(e) => updateField(null, 'coverTitleColor', e.target.value)}
+                    style={{
+                      fontSize: '11px',
+                      padding: '2px 6px',
+                      border: '1px solid var(--border)',
+                      borderRadius: '4px',
+                      width: '70px',
+                      textAlign: 'center'
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -1390,67 +1521,78 @@ function App() {
         <h2 className="section-title">소중한 결혼식 날</h2>
         <p className="section-subtitle">Date & Time</p>
 
-        <div className="card calendar-card">
-          <div className="calendar-header">{calendarData.year}. {String(calendarData.month).padStart(2, '0')}</div>
-          <div className="calendar-grid">
-            <div className="calendar-weekday">일</div>
-            <div className="calendar-weekday">월</div>
-            <div className="calendar-weekday">화</div>
-            <div className="calendar-weekday">수</div>
-            <div className="calendar-weekday">목</div>
-            <div className="calendar-weekday">금</div>
-            <div className="calendar-weekday">토</div>
+        {(() => {
+          const { dateString, timeString } = formatWeddingDetailDate(config.weddingDate);
+          return (
+            <div className="calendar-wrap">
+              <div className="calendar-header">
+                <div className="calendar-date">{dateString}</div>
+                {timeString && <div className="calendar-time">{timeString}</div>}
+              </div>
+              <div className="calendar-grid">
+                <div className="calendar-weekday">일</div>
+                <div className="calendar-weekday">월</div>
+                <div className="calendar-weekday">화</div>
+                <div className="calendar-weekday">수</div>
+                <div className="calendar-weekday">목</div>
+                <div className="calendar-weekday">금</div>
+                <div className="calendar-weekday">토</div>
 
-            {calendarData.days.map((item, idx) => {
-              if (item.day === null) {
-                return <div key={`empty-${idx}`} className="calendar-day calendar-day-empty"></div>;
-              }
+                {calendarData.days.map((item, idx) => {
+                  if (item.day === null) {
+                    return <div key={`empty-${idx}`} className="calendar-day calendar-day-empty"></div>;
+                  }
 
-              let dayClass = 'calendar-day';
-              if (item.isWedding) dayClass += ' calendar-day-wedding';
-              else if (item.isSun) dayClass += ' calendar-day-sun';
-              else if (item.isSat) dayClass += ' calendar-day-sat';
+                  let dayClass = 'calendar-day';
+                  if (item.isWedding) dayClass += ' calendar-day-wedding';
+                  else if (item.isSun) dayClass += ' calendar-day-sun';
+                  else if (item.isSat) dayClass += ' calendar-day-sat';
 
-              return (
-                <div key={`day-${idx}`} className={dayClass}>
-                  {item.day}
-                  {item.isWedding && <span className="calendar-heart-marker">♥</span>}
-                </div>
-              );
-            })}
-          </div>
-        </div>
+                  return (
+                    <div key={`day-${idx}`} className={dayClass}>
+                      {item.day}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Live D-Day Timer */}
         <div className="dday-container">
-          <div className="dday-title">
-            {timeLeft.isPast ? '💍 결혼식 당일 / 이후' : '⏱️ 결혼식까지 남은 시간'}
-          </div>
-
           {timeLeft.isPast ? (
             <div className="dday-banner-text">
               축하해 주셔서 감사합니다! <br />
               예쁘게 잘 살겠습니다. 💕
             </div>
           ) : (
-            <div className="dday-grid">
-              <div className="dday-item">
-                <span className="dday-val">{timeLeft.days}</span>
-                <span className="dday-lbl">DAYS</span>
+            <>
+              <div className="countdown-timer">
+                <div className="countdown-item">
+                  <span className="countdown-label">DAYS</span>
+                  <span className="countdown-value">{timeLeft.days}</span>
+                </div>
+                <span className="countdown-separator">:</span>
+                <div className="countdown-item">
+                  <span className="countdown-label">HOUR</span>
+                  <span className="countdown-value">{timeLeft.hours}</span>
+                </div>
+                <span className="countdown-separator">:</span>
+                <div className="countdown-item">
+                  <span className="countdown-label">MIN</span>
+                  <span className="countdown-value">{timeLeft.minutes}</span>
+                </div>
+                <span className="countdown-separator">:</span>
+                <div className="countdown-item">
+                  <span className="countdown-label">SEC</span>
+                  <span className="countdown-value">{timeLeft.seconds}</span>
+                </div>
               </div>
-              <div className="dday-item">
-                <span className="dday-val">{timeLeft.hours}</span>
-                <span className="dday-lbl">HOURS</span>
+              <div className="countdown-text">
+                {config.groom.name}, {config.bride.name}의 결혼식이 <span className="countdown-highlight">{timeLeft.days}</span>일 남았습니다.
               </div>
-              <div className="dday-item">
-                <span className="dday-val">{timeLeft.minutes}</span>
-                <span className="dday-lbl">MINS</span>
-              </div>
-              <div className="dday-item">
-                <span className="dday-val">{timeLeft.seconds}</span>
-                <span className="dday-lbl">SECS</span>
-              </div>
-            </div>
+            </>
           )}
         </div>
       </section>
@@ -1981,13 +2123,15 @@ function App() {
                     <span className="guestbook-card-date">
                       {item.timestamp ? formatGuestbookDate(item.timestamp) : '방금 전'}
                     </span>
-                    <button
-                      type="button"
-                      className="guestbook-card-delete-btn"
-                      onClick={() => handleDeleteMessage(item.id, item.password)}
-                    >
-                      🗑️
-                    </button>
+                    {isEditMode && (
+                      <button
+                        type="button"
+                        className="guestbook-card-delete-btn"
+                        onClick={() => handleDeleteMessage(item.id, item.password)}
+                      >
+                        🗑️
+                      </button>
+                    )}
                   </div>
                 </div>
                 <p className="guestbook-card-message">{item.message}</p>
@@ -2296,20 +2440,30 @@ function App() {
 
       {/* ================= EDIT MODE FLOATING TOOLBAR ================= */}
       {isEditableEnv && (
-        <div className="edit-control-bar">
-          <div className="edit-control-header">
-            <span>⚙️ 모바일 청첩장 실시간 편집 패널</span>
-            <button
-              type="button"
-              className="btn btn-secondary btn-sm"
-              style={{ width: 'auto', padding: '4px 8px' }}
-              onClick={() => setIsEditMode(!isEditMode)}
-            >
-              {isEditMode ? '편집 비활성화 ❌' : '편집 활성화 ✍️'}
-            </button>
-          </div>
-          {isEditMode && (
-            <>
+        <>
+          {!isEditMode ? (
+            <div className="edit-collapsed-trigger">
+              <button
+                type="button"
+                className="edit-toggle-fab"
+                onClick={() => setIsEditMode(true)}
+              >
+                ✍️ 실시간 편집 활성화
+              </button>
+            </div>
+          ) : (
+            <div className="edit-control-bar">
+              <div className="edit-control-header">
+                <span>⚙️ 모바일 청첩장 실시간 편집 패널</span>
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  style={{ width: 'auto', padding: '4px 8px' }}
+                  onClick={() => setIsEditMode(false)}
+                >
+                  편집 비활성화 ❌
+                </button>
+              </div>
               <div className="form-group" style={{ margin: 0 }}>
                 <label style={{ fontSize: '11px', marginBottom: '2px' }}>배경음악 URL 설정</label>
                 <input
@@ -2350,9 +2504,9 @@ function App() {
                   수정 초기화
                 </button>
               </div>
-            </>
+            </div>
           )}
-        </div>
+        </>
       )}
 
       {/* ================= MODALS & POPUPS ================= */}
@@ -2626,7 +2780,11 @@ function App() {
       {lightbox.isOpen && (
         <div
           className="lightbox-overlay"
-          onClick={() => setLightbox({ isOpen: false, index: 0 })}
+          onClick={() => {
+            setLightbox({ isOpen: false, index: 0 });
+            setDragOffset(0);
+            setIsDragging(false);
+          }}
         >
           <div
             className="lightbox-content"
@@ -2638,15 +2796,55 @@ function App() {
             <button
               type="button"
               className="lightbox-close"
-              onClick={() => setLightbox({ isOpen: false, index: 0 })}
+              onClick={() => {
+                setLightbox({ isOpen: false, index: 0 });
+                setDragOffset(0);
+                setIsDragging(false);
+              }}
             >
               ×
             </button>
-            <img
-              src={galleryImages[lightbox.index].src}
-              className="lightbox-img"
-              alt={galleryImages[lightbox.index].caption}
-            />
+            <div className="lightbox-slider-wrapper" style={{ overflow: 'hidden', width: '100%', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)' }}>
+              <div 
+                className="lightbox-slider"
+                style={{
+                  display: 'flex',
+                  width: '100%',
+                  transform: dragOffset >= 0 
+                    ? `translate3d(calc(${-lightbox.index * 100}% + ${dragOffset}px), 0, 0)`
+                    : `translate3d(calc(${-lightbox.index * 100}% - ${Math.abs(dragOffset)}px), 0, 0)`,
+                  transition: isDragging ? 'none' : 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                }}
+              >
+                {galleryImages.map((img, idx) => (
+                  <div 
+                    key={idx} 
+                    className="lightbox-slide"
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexShrink: 0
+                    }}
+                  >
+                    <img
+                      src={img.src}
+                      className="lightbox-img"
+                      alt={img.caption}
+                      style={{
+                        width: '100%',
+                        height: 'auto',
+                        display: 'block',
+                        userSelect: 'none',
+                        WebkitUserDrag: 'none'
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
             <div className="lightbox-caption">{galleryImages[lightbox.index].caption}</div>
 
             {/* Loop Slider Navigations */}
