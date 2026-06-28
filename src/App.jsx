@@ -2705,14 +2705,20 @@ function App() {
                           id="att-no"
                           name="attending"
                           checked={rsvpForm.attending === 'no'}
-                          onChange={() => setRsvpForm(prev => ({ ...prev, attending: 'no' }))}
+                          /* 💡 이 부분을 수정했습니다: 미참석 클릭 시 식사와 인원수를 초기화 */
+                          onChange={() => setRsvpForm(prev => ({
+                            ...prev,
+                            attending: 'no',
+                            guestsCount: 0, // 미참석이므로 동반 인원도 0으로 초기화 (선택사항)
+                            meal: ''        // 식사 여부를 빈값으로 저장
+                          }))}
                         />
                         <label htmlFor="att-no" className="radio-label">미참석</label>
                       </div>
                     </div>
                   </div>
 
-                  {/* Guest Count */}
+                  {/* Guest Count & Meal Option */}
                   {rsvpForm.attending === 'yes' && (
                     <>
                       <div className="form-group">
@@ -2727,7 +2733,6 @@ function App() {
                         </select>
                       </div>
 
-                      {/* Meal Option */}
                       <div className="form-group">
                         <label>식사 여부</label>
                         <div className="radio-group">
