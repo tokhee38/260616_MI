@@ -1769,12 +1769,14 @@
 .title-wedding {
   font-size: 76px;
   text-align: left;
+  font-family: 'Apple Chancery', 'Segoe Script', cursive;
 }
 
 .title-invitation {
   font-size: 76px;
   text-align: right;
   margin-top: -10px;
+  font-family: 'Apple Chancery', 'Segoe Script', cursive;
 }
 
 /* Edit Mode Cover Size Slider Control */

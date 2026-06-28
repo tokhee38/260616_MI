@@ -946,7 +946,7 @@ function App() {
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}.${month}.${day}`;
       }
-      
+
       // Fallback for Korean local spreadsheet formatted dates (e.g. "2026. 6. 21. 오후 3:18:28")
       const cleaned = String(timestamp).replace(/[오전|오후].*$/, '').trim();
       const parts = cleaned.match(/\d+/g);
@@ -1132,7 +1132,7 @@ function App() {
             />
           ))}
         </div>
-        <div 
+        <div
           className="cover-image-container"
           style={{
             paddingLeft: `${((100 - (config.coverImageScale || 85)) / 2) * 1.5}%`,
@@ -1153,7 +1153,7 @@ function App() {
               }}
             >
               <div className="title-wedding" style={{ fontSize: `${config.coverTitleSize || 76}px` }}>Wedding</div>
-              <div className="title-invitation" style={{ fontSize: `${config.coverTitleSize || 76}px` }}>Invitation*</div>
+              <div className="title-invitation" style={{ fontSize: `${config.coverTitleSize || 76}px` }}>Invitation</div>
             </div>
 
             <img
@@ -1180,7 +1180,6 @@ function App() {
               </div>
             )}
           </div>
-          
           {/* Edit Mode Cover Control Panel */}
           {isEditMode && (
             <div className="cover-edit-panel" onClick={(e) => e.stopPropagation()} style={{
@@ -1367,10 +1366,10 @@ function App() {
               )}
               <div className="contact-action-icons">
                 <a href={`tel:${config.groom.phone}`} className="contact-icon-link" title="전화">
-                  <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/></svg>
+                  <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
                 </a>
                 <a href={`sms:${config.groom.phone}`} className="contact-icon-link" title="문자">
-                  <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
                 </a>
               </div>
             </div>
@@ -1390,10 +1389,10 @@ function App() {
               )}
               <div className="contact-action-icons">
                 <a href={`tel:${config.bride.phone}`} className="contact-icon-link" title="전화">
-                  <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/></svg>
+                  <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
                 </a>
                 <a href={`sms:${config.bride.phone}`} className="contact-icon-link" title="문자">
-                  <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
                 </a>
               </div>
             </div>
@@ -1428,10 +1427,10 @@ function App() {
                     )}
                     <div className="contact-action-icons">
                       <a href={`tel:${config.groom.fatherPhone}`} className="contact-icon-link" title="전화">
-                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/></svg>
+                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
                       </a>
                       <a href={`sms:${config.groom.fatherPhone}`} className="contact-icon-link" title="문자">
-                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
                       </a>
                     </div>
                   </div>
@@ -1451,10 +1450,10 @@ function App() {
                     )}
                     <div className="contact-action-icons">
                       <a href={`tel:${config.groom.motherPhone}`} className="contact-icon-link" title="전화">
-                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/></svg>
+                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
                       </a>
                       <a href={`sms:${config.groom.motherPhone}`} className="contact-icon-link" title="문자">
-                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
                       </a>
                     </div>
                   </div>
@@ -1478,10 +1477,10 @@ function App() {
                     )}
                     <div className="contact-action-icons">
                       <a href={`tel:${config.bride.fatherPhone}`} className="contact-icon-link" title="전화">
-                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/></svg>
+                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
                       </a>
                       <a href={`sms:${config.bride.fatherPhone}`} className="contact-icon-link" title="문자">
-                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
                       </a>
                     </div>
                   </div>
@@ -1501,10 +1500,10 @@ function App() {
                     )}
                     <div className="contact-action-icons">
                       <a href={`tel:${config.bride.motherPhone}`} className="contact-icon-link" title="전화">
-                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/></svg>
+                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
                       </a>
                       <a href={`sms:${config.bride.motherPhone}`} className="contact-icon-link" title="문자">
-                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
                       </a>
                     </div>
                   </div>
@@ -1600,7 +1599,7 @@ function App() {
       {/* 5. Gallery Section */}
       <section className="gallery-section scroll-reveal">
         <h2 className="section-title">갤러리</h2>
-        <p className="section-subtitle">Our Wedding Gallery</p>
+        <p className="section-subtitle">Our fetch(sheetUrlGallery</p>
 
         {/* Multi-image upload toolbar for Admin in Edit Mode */}
         {isEditMode && (
@@ -1701,19 +1700,19 @@ function App() {
 
         <div className="info-tabs-container">
           <div className="info-tabs-header">
-            <button 
+            <button
               className={`info-tab-btn ${activeInfoTab === 'wedding' ? 'active' : ''}`}
               onClick={() => setActiveInfoTab('wedding')}
             >
               예식 정보
             </button>
-            <button 
+            <button
               className={`info-tab-btn ${activeInfoTab === 'meal' ? 'active' : ''}`}
               onClick={() => setActiveInfoTab('meal')}
             >
               식사 안내
             </button>
-            <button 
+            <button
               className={`info-tab-btn ${activeInfoTab === 'dress' ? 'active' : ''}`}
               onClick={() => setActiveInfoTab('dress')}
             >
@@ -1902,19 +1901,19 @@ function App() {
                 style={{ width: '100%', height: '100%' }}
               />
             ) : (
-              <iframe 
+              <iframe
                 src={`https://maps.google.com/maps?q=${encodeURIComponent(config.location.address + ' ' + config.location.hallName)}&t=&z=16&ie=UTF8&iwloc=&output=embed`}
-                width="100%" 
-                height="100%" 
-                style={{ border: 0 }} 
-                allowFullScreen="" 
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen=""
                 loading="lazy"
                 title="Map"
               ></iframe>
             )}
 
             {/* Address Copy overlay button */}
-            <div 
+            <div
               className="map-overlay-btn"
               onClick={() => copyText(config.location.address, '식장 주소가 복사되었습니다! 📋')}
               style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(255,255,255,0.95)', border: '1px solid var(--border)', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', boxShadow: 'var(--shadow-sm)', zIndex: 10 }}
@@ -3142,15 +3141,15 @@ function doGet(e) {
       {showWelcomeRsvp && (
         <div className="welcome-popup-overlay" onClick={closeWelcomePopup}>
           <div className="welcome-popup-card" onClick={(e) => e.stopPropagation()}>
-            <button 
-              type="button" 
-              className="welcome-popup-close" 
+            <button
+              type="button"
+              className="welcome-popup-close"
               onClick={closeWelcomePopup}
             >
               ×
             </button>
             <h3 className="welcome-popup-title">참석 의사 전달</h3>
-            
+
             <div className="welcome-popup-icon-container">
               <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
@@ -3202,16 +3201,16 @@ function doGet(e) {
             <hr className="welcome-popup-divider" />
 
             <div className="welcome-popup-actions">
-              <button 
-                type="button" 
-                className="btn-today-hide" 
+              <button
+                type="button"
+                className="btn-today-hide"
                 onClick={handleHideWelcomeToday}
               >
                 오늘 하루 보지 않기
               </button>
-              <button 
-                type="button" 
-                className="btn-popup-rsvp" 
+              <button
+                type="button"
+                className="btn-popup-rsvp"
                 onClick={handlePopupRsvpClick}
               >
                 참석의사 전달하기
