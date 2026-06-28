@@ -116,7 +116,7 @@
   },
   "coverImageScale": 90,
   "coverTitleSize": 64,
-  "coverTitleTop": -10,
-  "coverTitleLeft": -20,
+  "coverTitleTop": 10,
+  "coverTitleLeft": 10,
   "coverTitleColor": "#ffffff"
 }

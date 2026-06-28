@@ -1796,15 +1796,15 @@
 .title-wedding {
   font-size: 60px;
   text-align: left;
-  font-family: 'Charter', 'Bitstream Charter', 'Constantia', 'Georgia', serif;
+  font-family: 'Hoefler Text Black', 'Hoefler Text', serif;
   font-style: italic;
 }
 
 .title-invitation {
   font-size: 60px;
   text-align: right;
-  margin-top: -10px;
-  font-family: 'Charter', 'Bitstream Charter', 'Constantia', 'Georgia', serif;
+  margin-top: 10px;
+  font-family: 'Hoefler Text Black', 'Hoefler Text', serif;
   font-style: italic;
 }
 
