@@ -56,6 +56,7 @@ function App() {
   const [showRsvpModal, setShowRsvpModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showParentsContact, setShowParentsContact] = useState(true);
+  const [showDirectContact, setShowDirectContact] = useState(false);
   const [activeInfoTab, setActiveInfoTab] = useState('wedding');
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showManualCopyModal, setShowManualCopyModal] = useState(false);
@@ -1348,166 +1349,176 @@ function App() {
           </div>
         </div>
 
-        {/* 축하 인사 및 연락하기 - 페이지 통합 직관 배치 */}
-        <div className="direct-contact-section">
-          <div className="contact-grid-row">
-            {/* Groom side */}
-            <div className="contact-column">
-              <span className="contact-label-title">신랑</span>
-              {isEditMode && (
-                <input
-                  type="text"
-                  className="edit-input-inline"
-                  style={{ fontSize: '11px', padding: '4px 8px', height: '24px', margin: '4px 0', width: '100px', display: 'inline-block' }}
-                  value={config.groom.phone}
-                  onChange={(e) => updateField('groom', 'phone', e.target.value)}
-                  placeholder="신랑 연락처"
-                />
-              )}
-              <div className="contact-action-icons">
-                <a href={`tel:${config.groom.phone}`} className="contact-icon-link" title="전화">
-                  <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
-                </a>
-                <a href={`sms:${config.groom.phone}`} className="contact-icon-link" title="문자">
-                  <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                </a>
+        {/* 연락으로 마음 전하기 토글 */}
+        <div className="direct-contact-toggle" onClick={() => setShowDirectContact(!showDirectContact)}>
+          <span>연락으로 마음 전하기</span>
+          <span className="toggle-arrow">
+            {showDirectContact ? '▲' : '▼'}
+          </span>
+        </div>
+
+        <div className={`direct-contact-wrapper ${showDirectContact ? 'expanded' : 'collapsed'}`}>
+          {/* 축하 인사 및 연락하기 - 페이지 통합 직관 배치 */}
+          <div className="direct-contact-section">
+            <div className="contact-grid-row">
+              {/* Groom side */}
+              <div className="contact-column">
+                <span className="contact-label-title">신랑</span>
+                {isEditMode && (
+                  <input
+                    type="text"
+                    className="edit-input-inline"
+                    style={{ fontSize: '11px', padding: '4px 8px', height: '24px', margin: '4px 0', width: '100px', display: 'inline-block' }}
+                    value={config.groom.phone}
+                    onChange={(e) => updateField('groom', 'phone', e.target.value)}
+                    placeholder="신랑 연락처"
+                  />
+                )}
+                <div className="contact-action-icons">
+                  <a href={`tel:${config.groom.phone}`} className="contact-icon-link" title="전화">
+                    <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
+                  </a>
+                  <a href={`sms:${config.groom.phone}`} className="contact-icon-link" title="문자">
+                    <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
+                  </a>
+                </div>
+              </div>
+
+              {/* Bride side */}
+              <div className="contact-column">
+                <span className="contact-label-title">신부</span>
+                {isEditMode && (
+                  <input
+                    type="text"
+                    className="edit-input-inline"
+                    style={{ fontSize: '11px', padding: '4px 8px', height: '24px', margin: '4px 0', width: '100px', display: 'inline-block' }}
+                    value={config.bride.phone}
+                    onChange={(e) => updateField('bride', 'phone', e.target.value)}
+                    placeholder="신부 연락처"
+                  />
+                )}
+                <div className="contact-action-icons">
+                  <a href={`tel:${config.bride.phone}`} className="contact-icon-link" title="전화">
+                    <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
+                  </a>
+                  <a href={`sms:${config.bride.phone}`} className="contact-icon-link" title="문자">
+                    <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
+                  </a>
+                </div>
               </div>
             </div>
 
-            {/* Bride side */}
-            <div className="contact-column">
-              <span className="contact-label-title">신부</span>
-              {isEditMode && (
-                <input
-                  type="text"
-                  className="edit-input-inline"
-                  style={{ fontSize: '11px', padding: '4px 8px', height: '24px', margin: '4px 0', width: '100px', display: 'inline-block' }}
-                  value={config.bride.phone}
-                  onChange={(e) => updateField('bride', 'phone', e.target.value)}
-                  placeholder="신부 연락처"
-                />
-              )}
-              <div className="contact-action-icons">
-                <a href={`tel:${config.bride.phone}`} className="contact-icon-link" title="전화">
-                  <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
-                </a>
-                <a href={`sms:${config.bride.phone}`} className="contact-icon-link" title="문자">
-                  <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                </a>
-              </div>
+            {/* Parents toggle bar */}
+            <div className="parents-contact-toggle" onClick={() => setShowParentsContact(!showParentsContact)}>
+              <span>신랑측 혼주</span>
+              <span className="toggle-arrow">
+                {showParentsContact ? '▲' : '▼'}
+              </span>
+              <span>신부측 혼주</span>
             </div>
-          </div>
 
-          {/* Parents toggle bar */}
-          <div className="parents-contact-toggle" onClick={() => setShowParentsContact(!showParentsContact)}>
-            <span>신랑측 혼주</span>
-            <span className="toggle-arrow">
-              {showParentsContact ? '▲' : '▼'}
-            </span>
-            <span>신부측 혼주</span>
-          </div>
+            {/* Parents details container */}
+            <div className={`parents-contact-wrapper ${showParentsContact ? 'expanded' : 'collapsed'}`}>
+              <div className="parents-contact-grid">
+                {/* Groom's parents */}
+                <div className="parents-contact-side">
+                  {config.groom.fatherName && (
+                    <div className="parent-contact-block">
+                      <span className="parent-name-text">아버지 {config.groom.fatherName}</span>
+                      {isEditMode && (
+                        <input
+                          type="text"
+                          className="edit-input-inline"
+                          style={{ fontSize: '10px', padding: '2px 6px', height: '22px', margin: '2px 0', width: '90px', display: 'inline-block' }}
+                          value={config.groom.fatherPhone}
+                          onChange={(e) => updateField('groom', 'fatherPhone', e.target.value)}
+                          placeholder="연락처"
+                        />
+                      )}
+                      <div className="contact-action-icons">
+                        <a href={`tel:${config.groom.fatherPhone}`} className="contact-icon-link" title="전화">
+                          <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
+                        </a>
+                        <a href={`sms:${config.groom.fatherPhone}`} className="contact-icon-link" title="문자">
+                          <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                  {config.groom.motherName && (
+                    <div className="parent-contact-block">
+                      <span className="parent-name-text">어머니 {config.groom.motherName}</span>
+                      {isEditMode && (
+                        <input
+                          type="text"
+                          className="edit-input-inline"
+                          style={{ fontSize: '10px', padding: '2px 6px', height: '22px', margin: '2px 0', width: '90px', display: 'inline-block' }}
+                          value={config.groom.motherPhone}
+                          onChange={(e) => updateField('groom', 'motherPhone', e.target.value)}
+                          placeholder="연락처"
+                        />
+                      )}
+                      <div className="contact-action-icons">
+                        <a href={`tel:${config.groom.motherPhone}`} className="contact-icon-link" title="전화">
+                          <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
+                        </a>
+                        <a href={`sms:${config.groom.motherPhone}`} className="contact-icon-link" title="문자">
+                          <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
-          {/* Parents details container */}
-          <div className={`parents-contact-wrapper ${showParentsContact ? 'expanded' : 'collapsed'}`}>
-            <div className="parents-contact-grid">
-              {/* Groom's parents */}
-              <div className="parents-contact-side">
-                {config.groom.fatherName && (
-                  <div className="parent-contact-block">
-                    <span className="parent-name-text">아버지 {config.groom.fatherName}</span>
-                    {isEditMode && (
-                      <input
-                        type="text"
-                        className="edit-input-inline"
-                        style={{ fontSize: '10px', padding: '2px 6px', height: '22px', margin: '2px 0', width: '90px', display: 'inline-block' }}
-                        value={config.groom.fatherPhone}
-                        onChange={(e) => updateField('groom', 'fatherPhone', e.target.value)}
-                        placeholder="연락처"
-                      />
-                    )}
-                    <div className="contact-action-icons">
-                      <a href={`tel:${config.groom.fatherPhone}`} className="contact-icon-link" title="전화">
-                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
-                      </a>
-                      <a href={`sms:${config.groom.fatherPhone}`} className="contact-icon-link" title="문자">
-                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                      </a>
+                {/* Bride's parents */}
+                <div className="parents-contact-side">
+                  {config.bride.fatherName && (
+                    <div className="parent-contact-block">
+                      <span className="parent-name-text">아버지 {config.bride.fatherName}</span>
+                      {isEditMode && (
+                        <input
+                          type="text"
+                          className="edit-input-inline"
+                          style={{ fontSize: '10px', padding: '2px 6px', height: '22px', margin: '2px 0', width: '90px', display: 'inline-block' }}
+                          value={config.bride.fatherPhone}
+                          onChange={(e) => updateField('bride', 'fatherPhone', e.target.value)}
+                          placeholder="연락처"
+                        />
+                      )}
+                      <div className="contact-action-icons">
+                        <a href={`tel:${config.bride.fatherPhone}`} className="contact-icon-link" title="전화">
+                          <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
+                        </a>
+                        <a href={`sms:${config.bride.fatherPhone}`} className="contact-icon-link" title="문자">
+                          <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                )}
-                {config.groom.motherName && (
-                  <div className="parent-contact-block">
-                    <span className="parent-name-text">어머니 {config.groom.motherName}</span>
-                    {isEditMode && (
-                      <input
-                        type="text"
-                        className="edit-input-inline"
-                        style={{ fontSize: '10px', padding: '2px 6px', height: '22px', margin: '2px 0', width: '90px', display: 'inline-block' }}
-                        value={config.groom.motherPhone}
-                        onChange={(e) => updateField('groom', 'motherPhone', e.target.value)}
-                        placeholder="연락처"
-                      />
-                    )}
-                    <div className="contact-action-icons">
-                      <a href={`tel:${config.groom.motherPhone}`} className="contact-icon-link" title="전화">
-                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
-                      </a>
-                      <a href={`sms:${config.groom.motherPhone}`} className="contact-icon-link" title="문자">
-                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                      </a>
+                  )}
+                  {config.bride.motherName && (
+                    <div className="parent-contact-block">
+                      <span className="parent-name-text">어머니 {config.bride.motherName}</span>
+                      {isEditMode && (
+                        <input
+                          type="text"
+                          className="edit-input-inline"
+                          style={{ fontSize: '10px', padding: '2px 6px', height: '22px', margin: '2px 0', width: '90px', display: 'inline-block' }}
+                          value={config.bride.motherPhone}
+                          onChange={(e) => updateField('bride', 'motherPhone', e.target.value)}
+                          placeholder="연락처"
+                        />
+                      )}
+                      <div className="contact-action-icons">
+                        <a href={`tel:${config.bride.motherPhone}`} className="contact-icon-link" title="전화">
+                          <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
+                        </a>
+                        <a href={`sms:${config.bride.motherPhone}`} className="contact-icon-link" title="문자">
+                          <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Bride's parents */}
-              <div className="parents-contact-side">
-                {config.bride.fatherName && (
-                  <div className="parent-contact-block">
-                    <span className="parent-name-text">아버지 {config.bride.fatherName}</span>
-                    {isEditMode && (
-                      <input
-                        type="text"
-                        className="edit-input-inline"
-                        style={{ fontSize: '10px', padding: '2px 6px', height: '22px', margin: '2px 0', width: '90px', display: 'inline-block' }}
-                        value={config.bride.fatherPhone}
-                        onChange={(e) => updateField('bride', 'fatherPhone', e.target.value)}
-                        placeholder="연락처"
-                      />
-                    )}
-                    <div className="contact-action-icons">
-                      <a href={`tel:${config.bride.fatherPhone}`} className="contact-icon-link" title="전화">
-                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
-                      </a>
-                      <a href={`sms:${config.bride.fatherPhone}`} className="contact-icon-link" title="문자">
-                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                      </a>
-                    </div>
-                  </div>
-                )}
-                {config.bride.motherName && (
-                  <div className="parent-contact-block">
-                    <span className="parent-name-text">어머니 {config.bride.motherName}</span>
-                    {isEditMode && (
-                      <input
-                        type="text"
-                        className="edit-input-inline"
-                        style={{ fontSize: '10px', padding: '2px 6px', height: '22px', margin: '2px 0', width: '90px', display: 'inline-block' }}
-                        value={config.bride.motherPhone}
-                        onChange={(e) => updateField('bride', 'motherPhone', e.target.value)}
-                        placeholder="연락처"
-                      />
-                    )}
-                    <div className="contact-action-icons">
-                      <a href={`tel:${config.bride.motherPhone}`} className="contact-icon-link" title="전화">
-                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z" /></svg>
-                      </a>
-                      <a href={`sms:${config.bride.motherPhone}`} className="contact-icon-link" title="문자">
-                        <svg className="contact-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                      </a>
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </div>
