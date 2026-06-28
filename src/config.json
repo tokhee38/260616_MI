@@ -115,8 +115,8 @@
     "dress_text3": "※ 베이지색, 파스텔톤 등\n자유롭게 착용해 주셔도 됩니다."
   },
   "coverImageScale": 90,
-  "coverTitleSize": 76,
+  "coverTitleSize": 64,
   "coverTitleTop": -10,
   "coverTitleLeft": -20,
-  "coverTitleColor": "#4e4449"
+  "coverTitleColor": "#ffffff"
 }
