@@ -4,7 +4,8 @@
 .bg-music-player {
   position: fixed;
   top: 20px;
-  right: calc(50% - 210px); /* Position relative to the mobile wrapper */
+  right: calc(50% - 210px);
+  /* Position relative to the mobile wrapper */
   z-index: 100;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(8px);
@@ -36,7 +37,9 @@
 }
 
 @keyframes spin {
-  100% { transform: rotate(360deg); }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .cover-section {
@@ -62,6 +65,7 @@
     opacity: 0;
     transform: scale(1.03);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -421,6 +425,7 @@
     opacity: 0;
     transform: translateY(4px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -643,11 +648,13 @@
 }
 
 .calendar-weekday:first-child {
-  color: #F79E9E; /* soft pastel pink for Sunday */
+  color: #F79E9E;
+  /* soft pastel pink for Sunday */
 }
 
 .calendar-weekday:last-child {
-  color: #4D4C4C; /* dark gray for Saturday (no blue) */
+  color: #4D4C4C;
+  /* dark gray for Saturday (no blue) */
 }
 
 .calendar-day {
@@ -660,11 +667,13 @@
 }
 
 .calendar-day-sun {
-  color: #F79E9E; /* soft pink Sunday */
+  color: #F79E9E;
+  /* soft pink Sunday */
 }
 
 .calendar-day-sat {
-  color: #4D4C4C; /* regular gray Saturday */
+  color: #4D4C4C;
+  /* regular gray Saturday */
 }
 
 .calendar-day-empty {
@@ -672,7 +681,8 @@
 }
 
 .calendar-day-wedding {
-  background-color: var(--primary); /* soft purple circle */
+  background-color: var(--primary);
+  /* soft purple circle */
   color: white !important;
   font-weight: 700;
   border-radius: 50%;
@@ -694,7 +704,8 @@
 .countdown-timer {
   display: flex;
   justify-content: center;
-  align-items: flex-end; /* aligns separators and values to their baselines */
+  align-items: flex-end;
+  /* aligns separators and values to their baselines */
   gap: 16px;
   font-family: "Crimson Pro", "Gowun Batang", Georgia, serif;
 }
@@ -725,7 +736,8 @@
   font-size: 20px;
   color: #4D4C4C;
   line-height: 1;
-  padding-bottom: 2px; /* align vertically with values */
+  padding-bottom: 2px;
+  /* align vertically with values */
   font-family: "Crimson Pro", sans-serif;
 }
 
@@ -982,7 +994,7 @@
   width: 100%;
 }
 
-.radio-option input[type="radio"]:checked + .radio-label {
+.radio-option input[type="radio"]:checked+.radio-label {
   background-color: var(--primary-light);
   border-color: var(--primary);
   color: var(--primary-dark);
@@ -1016,9 +1028,11 @@
 .guestbook-list::-webkit-scrollbar {
   width: 6px;
 }
+
 .guestbook-list::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .guestbook-list::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 3px;
@@ -1356,10 +1370,12 @@
 /* Floating Control Panel for Admin */
 .edit-control-bar {
   position: fixed;
-  bottom: 24px; /* raised from viewport bottom */
+  bottom: 24px;
+  /* raised from viewport bottom */
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 32px); /* horizontal padding spacing */
+  width: calc(100% - 32px);
+  /* horizontal padding spacing */
   max-width: 440px;
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(10px);
@@ -1385,11 +1401,13 @@
   max-width: 480px;
   display: flex;
   justify-content: center;
-  pointer-events: none; /* let clicks pass through trigger background */
+  pointer-events: none;
+  /* let clicks pass through trigger background */
 }
 
 .edit-toggle-fab {
-  pointer-events: auto; /* capture click on the button itself */
+  pointer-events: auto;
+  /* capture click on the button itself */
   background-color: var(--primary);
   color: white;
   border: none;
@@ -1416,10 +1434,12 @@
     transform: scale(1);
     box-shadow: 0 4px 15px rgba(255, 141, 161, 0.4);
   }
+
   50% {
     transform: scale(1.05);
     box-shadow: 0 4px 25px rgba(255, 141, 161, 0.6);
   }
+
   100% {
     transform: scale(1);
     box-shadow: 0 4px 15px rgba(255, 141, 161, 0.4);
@@ -1519,7 +1539,7 @@
   cursor: pointer;
   z-index: 20;
   transition: all 0.2s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .gallery-item-delete-btn:hover {
@@ -1587,12 +1607,15 @@
     transform: translateX(0) rotate(0deg) scale(0.8);
     opacity: 0;
   }
+
   10% {
     opacity: 0.8;
   }
+
   90% {
     opacity: 0.8;
   }
+
   100% {
     top: 105%;
     transform: translateX(80px) rotate(540deg) scale(0.6);
@@ -1602,7 +1625,8 @@
 
 /* Welcome RSVP Popup Modal */
 .welcome-popup-overlay {
-  position: fixed; /* viewport bound */
+  position: fixed;
+  /* viewport bound */
   top: 0;
   left: 50%;
   transform: translateX(-50%);
@@ -1636,6 +1660,7 @@
     transform: scale(0.95);
     opacity: 0;
   }
+
   to {
     transform: scale(1);
     opacity: 1;
@@ -1752,31 +1777,35 @@
 /* Cursive Cover Title Overlay */
 .cover-invitation-title {
   position: absolute;
-  top: -10px; /* lowered slightly from -30px */
+  top: -10px;
+  /* lowered slightly from -30px */
   left: -20px;
   right: -20px;
   pointer-events: none;
   z-index: 10;
   font-family: 'Alex Brush', cursive;
   line-height: 0.85;
-  color: #4e4449;
+  color: #ffffff;
   opacity: 0.9;
-  transform: rotate(-5deg); /* slant by 5 degrees */
+  transform: rotate(-5deg);
+  /* slant by 5 degrees */
   transform-origin: center center;
-  text-shadow: 1px 1px 2px rgba(78, 68, 73, 0.15);
+  text-shadow: 1px 1px 2px rgba(249, 207, 255, 0.816);
 }
 
 .title-wedding {
-  font-size: 76px;
+  font-size: 60px;
   text-align: left;
-  font-family: 'Apple Chancery', 'Segoe Script', cursive;
+  font-family: 'Charter', 'Bitstream Charter', 'Constantia', 'Georgia', serif;
+  font-style: italic;
 }
 
 .title-invitation {
-  font-size: 76px;
+  font-size: 60px;
   text-align: right;
   margin-top: -10px;
-  font-family: 'Apple Chancery', 'Segoe Script', cursive;
+  font-family: 'Charter', 'Bitstream Charter', 'Constantia', 'Georgia', serif;
+  font-style: italic;
 }
 
 /* Edit Mode Cover Size Slider Control */
@@ -1810,5 +1839,3 @@
   font-weight: bold;
   color: var(--primary);
 }
-
-
