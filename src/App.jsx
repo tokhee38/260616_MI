@@ -2046,7 +2046,8 @@ function App() {
                 <span>대중교통 안내</span>
               </div>
               <div className="transport-desc">
-                <p>• <strong>지하철</strong>: <strong>7호선 학동역</strong> 10번 출구 또는 <strong>3호선 압구정역</strong> 3번 출구 하차 후 도보 또는 버스 이용</p>
+                <p>• <strong>지하철</strong>: <strong>7호선 학동역</strong> 10번 출구 또는 <strong>3호선 압구정역</strong> 3번 출구 하차 후 도보 또는 셔틀 이용</p>
+                <p style={{ paddingLeft: '12px', color: 'var(--text-light)' }}>- 셔틀버스 운행: 7호선 학동역 10번 출구(서울세관방면)에서 예식시간 1시간 전부터 셔틀버스 수시 운행</p>
                 <p style={{ marginTop: '8px' }}>• <strong>버스 (언북중학교 입구 정류장 하차)</strong></p>
                 <p style={{ paddingLeft: '12px', color: 'var(--text-light)' }}>- 간선: 145, 440 / 지선: 4212</p>
                 <p style={{ marginTop: '8px' }}>• <strong>버스 (서울세관 정류장 하차)</strong></p>
