@@ -1835,9 +1835,9 @@ function App() {
                     <p className="info-group-text highlight" style={{ marginTop: '12px' }}>
                       <span className="editable-area">{renderEditableText('notice', 'meal_text1_3', true)}</span>
                     </p>
-                    <p className="info-group-text" style={{ marginTop: '8px' }}>
+                    {/* <p className="info-group-text" style={{ marginTop: '8px' }}>
                       <span className="editable-area">{renderEditableText('notice', 'meal_text1_4', true)}</span>
-                    </p>
+                    </p> */}
                   </div>
                   <div className="info-content-group">
                     <h4 className="info-group-title">
