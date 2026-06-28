@@ -1326,26 +1326,26 @@ function App() {
           {renderEditableText('greeting', 'text', true)}
         </div>
 
-        {/* Parents Information */}
         <div className="parents-grid">
-          <span className="parents-row">
+          <div className="parents-side left">
             <div className="parents-names">
               <span className="editable-area">{renderEditableText('groom', 'fatherName')}</span>
-              <span> · </span>
+              <span className="separator"> · </span>
               <span className="editable-area">{renderEditableText('groom', 'motherName')}</span>
-              <span className="parents-relation">의 장남</span>
             </div>
+            <div className="parents-relation">의 아들</div>
             <div className="parents-child editable-area">{renderEditableText('groom', 'name')}</div>
-          </span>
-          <span className="parents-row">
+          </div>
+          <div className="lavender-heart">♥︎</div>
+          <div className="parents-side right">
             <div className="parents-names">
               <span className="editable-area">{renderEditableText('bride', 'fatherName')}</span>
-              <span> · </span>
+              <span className="separator"> · </span>
               <span className="editable-area">{renderEditableText('bride', 'motherName')}</span>
-              <span className="parents-relation">의 장녀</span>
             </div>
+            <div className="parents-relation">의 딸</div>
             <div className="parents-child editable-area">{renderEditableText('bride', 'name')}</div>
-          </span>
+          </div>
         </div>
 
         {/* 축하 인사 및 연락하기 - 페이지 통합 직관 배치 */}

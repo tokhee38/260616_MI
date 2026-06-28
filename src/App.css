@@ -147,7 +147,8 @@
 
 .parents-grid {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
   gap: 12px;
   padding: 22px 28px;
   /* background-color: var(--primary-light); */
@@ -162,20 +163,33 @@
   align-items: center;
 }
 
+.parents-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
 .parents-names {
   font-weight: 600;
   color: var(--text-dark);
 }
 
 .parents-relation {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-light);
-  margin-left: 6px;
+  margin: 3px 0;
 }
 
 .parents-child {
   font-weight: 700;
   color: var(--primary-dark);
+}
+
+.lavender-heart {
+  align-self: center;
+  font-size: 14px;
+  color: var(--primary);
 }
 
 /* Direct Contact Section on Page */
