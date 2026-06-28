@@ -2046,7 +2046,11 @@ function App() {
                 <span>대중교통 안내</span>
               </div>
               <div className="transport-desc">
-                <p>• 지하철 <strong>7호선 학동역</strong> 10번 출구 또는 <strong>3호선 압구정역</strong> 3번 출구에서 하차 후 도보 또는 버스를 이용해 주시기 바랍니다.</p>
+                <p>• <strong>지하철</strong>: <strong>7호선 학동역</strong> 10번 출구 또는 <strong>3호선 압구정역</strong> 3번 출구 하차 후 도보 또는 버스 이용</p>
+                <p style={{ marginTop: '8px' }}>• <strong>버스 (언북중학교 입구 정류장 하차)</strong></p>
+                <p style={{ paddingLeft: '12px', color: 'var(--text-light)' }}>- 간선: 145, 440 / 지선: 4212</p>
+                <p style={{ marginTop: '8px' }}>• <strong>버스 (서울세관 정류장 하차)</strong></p>
+                <p style={{ paddingLeft: '12px', color: 'var(--text-light)' }}>- 간선: 141 / 직행: 3600</p>
               </div>
             </div>
           </div>
@@ -2165,7 +2169,7 @@ function App() {
           {/* Groom's Side */}
           <div className={`accordion-item ${activeAccordion === 'groom' ? 'active' : ''}`}>
             <div className="accordion-header" onClick={() => toggleAccordion('groom')}>
-              <span>💙 신랑측 계좌번호 보기</span>
+              <span>🤵🏻 신랑측 계좌번호 보기</span>
               <span className="accordion-icon">▼</span>
             </div>
             {activeAccordion === 'groom' && (
@@ -2299,7 +2303,7 @@ function App() {
           {/* Bride's Side */}
           <div className={`accordion-item ${activeAccordion === 'bride' ? 'active' : ''}`}>
             <div className="accordion-header" onClick={() => toggleAccordion('bride')}>
-              <span>💗 신부측 계좌번호 보기</span>
+              <span>👰🏻‍♀️ 신부측 계좌번호 보기</span>
               <span className="accordion-icon">▼</span>
             </div>
             {activeAccordion === 'bride' && (
