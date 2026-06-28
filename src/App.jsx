@@ -1146,9 +1146,9 @@ function App() {
             <div
               className="cover-invitation-title"
               style={{
-                top: `${config.coverTitleTop !== undefined ? config.coverTitleTop : -10}px`,
-                left: `${config.coverTitleLeft !== undefined ? config.coverTitleLeft : -20}px`,
-                right: `${config.coverTitleLeft !== undefined ? config.coverTitleLeft : -20}px`,
+                top: `${config.coverTitleTop !== undefined ? config.coverTitleTop : 10}px`,
+                left: `${config.coverTitleLeft !== undefined ? config.coverTitleLeft : 10}px`,
+                right: `${config.coverTitleLeft !== undefined ? config.coverTitleLeft : 10}px`,
                 color: config.coverTitleColor || '#ffffffff'
               }}
             >
@@ -1328,24 +1328,24 @@ function App() {
 
         {/* Parents Information */}
         <div className="parents-grid">
-          <div className="parents-row">
-            <span className="parents-names">
+          <span className="parents-row">
+            <div className="parents-names">
               <span className="editable-area">{renderEditableText('groom', 'fatherName')}</span>
               <span> · </span>
               <span className="editable-area">{renderEditableText('groom', 'motherName')}</span>
               <span className="parents-relation">의 장남</span>
-            </span>
-            <span className="parents-child editable-area">{renderEditableText('groom', 'name')}</span>
-          </div>
-          <div className="parents-row">
-            <span className="parents-names">
+            </div>
+            <div className="parents-child editable-area">{renderEditableText('groom', 'name')}</div>
+          </span>
+          <span className="parents-row">
+            <div className="parents-names">
               <span className="editable-area">{renderEditableText('bride', 'fatherName')}</span>
               <span> · </span>
               <span className="editable-area">{renderEditableText('bride', 'motherName')}</span>
               <span className="parents-relation">의 장녀</span>
-            </span>
-            <span className="parents-child editable-area">{renderEditableText('bride', 'name')}</span>
-          </div>
+            </div>
+            <div className="parents-child editable-area">{renderEditableText('bride', 'name')}</div>
+          </span>
         </div>
 
         {/* 축하 인사 및 연락하기 - 페이지 통합 직관 배치 */}
