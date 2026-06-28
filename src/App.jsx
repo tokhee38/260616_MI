@@ -918,13 +918,13 @@ function App() {
       const day = String(date.getDate());
       const weekDays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
       const dayOfWeek = weekDays[date.getDay()];
-      
+
       let hours = date.getHours();
       const minutes = date.getMinutes();
       const ampm = hours >= 12 ? '오후' : '오전';
       hours = hours % 12;
       hours = hours ? hours : 12;
-      
+
       const timeString = `${dayOfWeek} ${ampm} ${hours}시` + (minutes > 0 ? ` ${minutes}분` : '');
       return {
         dateString: `${year}.${month.padStart(2, '0')}.${day.padStart(2, '0')}`,
@@ -1143,17 +1143,17 @@ function App() {
         >
           <div className="image-edit-wrapper" style={{ position: 'relative' }}>
             {/* Calligraphy Overlay Title (always maintained) */}
-            <div 
+            <div
               className="cover-invitation-title"
               style={{
                 top: `${config.coverTitleTop !== undefined ? config.coverTitleTop : -10}px`,
                 left: `${config.coverTitleLeft !== undefined ? config.coverTitleLeft : -20}px`,
                 right: `${config.coverTitleLeft !== undefined ? config.coverTitleLeft : -20}px`,
-                color: config.coverTitleColor || '#4e4449'
+                color: config.coverTitleColor || '#ffffffff'
               }}
             >
-              <div className="title-wedding" style={{ fontSize: `${config.coverTitleSize || 76}px` }}>Wedding</div>
-              <div className="title-invitation" style={{ fontSize: `${config.coverTitleSize || 76}px` }}>Invitation</div>
+              <div className="title-wedding" style={{ fontSize: `${config.coverTitleSize || 64}px` }}>Wedding</div>
+              <div className="title-invitation" style={{ fontSize: `${config.coverTitleSize || 64}px` }}>Invitation</div>
             </div>
 
             <img
@@ -2804,20 +2804,20 @@ function App() {
               ×
             </button>
             <div className="lightbox-slider-wrapper" style={{ overflow: 'hidden', width: '100%', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)' }}>
-              <div 
+              <div
                 className="lightbox-slider"
                 style={{
                   display: 'flex',
                   width: '100%',
-                  transform: dragOffset >= 0 
+                  transform: dragOffset >= 0
                     ? `translate3d(calc(${-lightbox.index * 100}% + ${dragOffset}px), 0, 0)`
                     : `translate3d(calc(${-lightbox.index * 100}% - ${Math.abs(dragOffset)}px), 0, 0)`,
                   transition: isDragging ? 'none' : 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                 }}
               >
                 {galleryImages.map((img, idx) => (
-                  <div 
-                    key={idx} 
+                  <div
+                    key={idx}
                     className="lightbox-slide"
                     style={{
                       width: '100%',
