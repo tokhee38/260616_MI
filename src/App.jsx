@@ -2444,13 +2444,15 @@ function App() {
           Copyright © 2026. All rights reserved.
         </p>
 
-        <button
-          type="button"
-          className="guide-toggle-btn"
-          onClick={() => setShowGuideModal(true)}
-        >
-          ⚙️ 구글 시트 연동 관리자 설정
-        </button>
+        {isEditMode && (
+          <button
+            type="button"
+            className="guide-toggle-btn"
+            onClick={() => setShowGuideModal(true)}
+          >
+            ⚙️ 구글 시트 연동 관리자 설정
+          </button>
+        )}
       </footer>
 
       {/* ================= EDIT MODE FLOATING TOOLBAR ================= */}
