@@ -1027,7 +1027,7 @@ function App() {
 
     return {
       src: getImageSrc(imgVal, fallbackAsset),
-      caption: `우리들의 소중한 순간 #${idx + 1}`
+      caption: `#${idx + 1}`
     };
   });
 
@@ -1723,12 +1723,12 @@ function App() {
             >
               식사 안내
             </button>
-            <button
+            {/*<button
               className={`info-tab-btn ${activeInfoTab === 'dress' ? 'active' : ''}`}
               onClick={() => setActiveInfoTab('dress')}
             >
               드레스 코드
-            </button>
+            </button>*/}
           </div>
 
           <div className="info-tab-content-card">
@@ -1851,7 +1851,7 @@ function App() {
               </div>
             )}
 
-            {activeInfoTab === 'dress' && (
+            {/*{activeInfoTab === 'dress' && (
               <div className="info-tab-pane animate-fade-in">
                 <div className="image-edit-wrapper" style={{ marginBottom: '20px', borderRadius: '8px', overflow: 'hidden' }}>
                   <img src={getImageSrc(config.images?.noticeDress, noticeDressImg)} className="info-pane-img" style={{ marginBottom: 0 }} alt="드레스 코드" />
@@ -1886,7 +1886,7 @@ function App() {
                   </p>
                 </div>
               </div>
-            )}
+            )}*/}
           </div>
         </div>
       </section>
@@ -2687,7 +2687,7 @@ function App() {
 
                   {/* Attending */}
                   <div className="form-group">
-                    <label>참석 여부</label>
+                    <label>참석 여부</label>ahd
                     <div className="radio-group">
                       <div className="radio-option">
                         <input
