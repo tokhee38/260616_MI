@@ -1610,7 +1610,7 @@ function App() {
       {/* 5. Gallery Section */}
       <section className="gallery-section scroll-reveal">
         <h2 className="section-title">갤러리</h2>
-        <p className="section-subtitle">Our fetch(sheetUrlGallery</p>
+        {/* <p className="section-subtitle">Our fetch(sheetUrlGallery</p> */}
 
         {/* Multi-image upload toolbar for Admin in Edit Mode */}
         {isEditMode && (
