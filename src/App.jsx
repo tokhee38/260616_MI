@@ -72,8 +72,9 @@ function App() {
   const [isDragging, setIsDragging] = useState(false);
 
   // Audio Player State
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const audioRef = useRef(null);
+  const hasManuallyPaused = useRef(false);
   const touchStartRef = useRef(0);
   const touchEndRef = useRef(0);
 
@@ -101,6 +102,43 @@ function App() {
     if (!hideUntil || now > parseInt(hideUntil)) {
       setShowWelcomeRsvp(true);
     }
+  }, []);
+
+  // BGM Autoplay and user interaction fallback
+  useEffect(() => {
+    const playAudio = () => {
+      if (hasManuallyPaused.current) return;
+      if (audioRef.current && audioRef.current.paused) {
+        audioRef.current.play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch(err => {
+            console.log("Autoplay blocked, waiting for user interaction:", err);
+          });
+      }
+    };
+
+    // Try playing immediately
+    playAudio();
+
+    // Fallback: play on first user interaction if blocked
+    const handleInteraction = () => {
+      playAudio();
+      window.removeEventListener('click', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
+      window.removeEventListener('scroll', handleInteraction);
+    };
+
+    window.addEventListener('click', handleInteraction);
+    window.addEventListener('touchstart', handleInteraction);
+    window.addEventListener('scroll', handleInteraction);
+
+    return () => {
+      window.removeEventListener('click', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
+      window.removeEventListener('scroll', handleInteraction);
+    };
   }, []);
 
   const handleHideWelcomeToday = () => {
@@ -568,10 +606,12 @@ function App() {
   const togglePlay = () => {
     if (isPlaying) {
       audioRef.current.pause();
+      hasManuallyPaused.current = true;
     } else {
       audioRef.current.play().catch(e => {
         console.log("Audio play blocked", e);
       });
+      hasManuallyPaused.current = false;
     }
     setIsPlaying(!isPlaying);
   };
@@ -1088,6 +1128,7 @@ function App() {
         ref={audioRef}
         src={config.bgmUrl}
         loop
+        autoPlay
       />
 
       {/* Floating Hearts Confetti */}
@@ -1107,7 +1148,7 @@ function App() {
           🎵
         </span>
         <span style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
-          {isPlaying ? 'BGM ON' : 'BGM OFF'}
+          {isPlaying ? 'BGM OFF' : 'BGM ON'}
         </span>
       </div>
 
