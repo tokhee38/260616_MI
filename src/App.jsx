@@ -341,7 +341,6 @@ function App() {
       audioRef.current.load();
       if (isPlaying) {
         audioRef.current.play().catch(e => {
-          setIsPlaying(false);
           console.log("Audio play failed after BGM URL change", e);
         });
       }
