@@ -2098,6 +2098,7 @@ function App() {
         </div>
       </section>
 
+
       {/* 7. RSVP Button Card */}
       <section className="rsvp-section scroll-reveal" style={{ backgroundColor: 'var(--primary-light)' }}>
         <h2 className="section-title">참석 의사 전달하기</h2>
