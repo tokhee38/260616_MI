@@ -2729,7 +2729,7 @@ function App() {
 
                   {/* Attending */}
                   <div className="form-group">
-                    <label>참석 여부</label>ahd
+                    <label>참석 여부</label>
                     <div className="radio-group">
                       <div className="radio-option">
                         <input
