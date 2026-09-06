@@ -14,7 +14,7 @@ import defaultGallery5 from './assets/gallery_5.png'
 import defaultGallery6 from './assets/gallery_6.png'
 import naverMapImg from './assets/naver_map.png'
 import noticeHallImg from './assets/notice_hall.png'
-// notice_meal.png removed (file deleted)
+import noticeMealImg from './assets/notice_meal.png'
 import noticeDressImg from './assets/notice_dress.png'
 
 // Import all gallery images dynamically using Vite glob
@@ -1050,7 +1050,7 @@ function App() {
     if (val.includes('gallery_5')) return defaultGallery5;
     if (val.includes('gallery_6')) return defaultGallery6;
     if (val.includes('notice_hall')) return noticeHallImg;
-    // notice_meal.png removed
+    if (val.includes('notice_meal')) return noticeMealImg;
     if (val.includes('notice_dress')) return noticeDressImg;
     return defaultAsset;
   };
